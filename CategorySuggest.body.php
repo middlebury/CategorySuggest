@@ -108,14 +108,14 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 /*************************************************************************************/
 ## Entry point for the CSS:
 function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
-	global $wgScriptPath;
+	global $wgScriptPath, $wgCategorySuggestcss;
 
 	# Register CSS file for input box:
 	$m_pageObj->addLink(
 		array(
 			'rel'	=> 'stylesheet',
 			'type'	=> 'text/css',
-			'href'	=> $wgScriptPath . '/extensions/CategorySuggest/CategorySuggest.css'
+			'href'	=> $wgCategorySuggestcss
 		)
 	);
 
