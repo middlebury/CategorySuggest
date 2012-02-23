@@ -56,6 +56,7 @@ function fnCategorySuggestAjax( $query ) {
 		$searchString = str_replace( '%' , '\%' , $searchString );
 		$searchString = str_replace( '_' , '\_' , $searchString );
 		$searchString = str_replace( '|' , '%' , $searchString );
+		$searchString = strtoupper($searchString);
 		$dbr =& wfGetDB( DB_SLAVE );
 		$categorylinks = $dbr->tableName('categorylinks');
 		$page          = $dbr->tableName('page');
