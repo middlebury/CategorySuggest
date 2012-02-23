@@ -21,8 +21,6 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
-	# Load system messages:
-	fnCategorySuggestMessageHook();
 	# Get the right member variables, depending on if we're on an upload form or not:
 	if( !$m_isUpload ) {
 		# Check if page is subpage once to save method calls later:
@@ -121,27 +119,6 @@ function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
 		)
 	);
 
-	return true;
-}
-
-
-/*************************************************************************************/
-## Entry point for localised messages:
-function fnCategorySuggestMessageHook() {
-	global $wgLang;
-	global $wgMessageCache;
-	
-	# Initialize array of all messages:
-	$messages=array();
-	# Load default messages (english):
-	include( 'i18n/CategorySuggest.i18n.php' );
-	# Load localised messages:
-	if( file_exists( dirname( __FILE__ ) . '/i18n/CategorySuggest.i18n.' . $wgLang->getCode() . '.php' ) ) { // avoid warnings
-		include( 'i18n/CategorySuggest.i18n.' . $wgLang->getCode() . '.php' );
-	}
-	# Put messages into message cache:
-	$wgMessageCache->addMessages( $messages );
-	
 	return true;
 }
 

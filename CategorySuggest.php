@@ -42,6 +42,8 @@ $wgExtensionCredits['parserhook'][] = array(
 	'url'		=> 'http://www.mediawiki.org/wiki/Extension:CategorySuggest',
 	'description'	=> 'Adds a Google Suggest-like category input box/typeahead functionality to the edit page.'
 );
+$wgExtensionMessagesFiles['CategorySuggest'] = dirname(__FILE__) . '/CategorySuggest.i18n.php';
+
 
 ## register Ajax function to be called from Javascript file
 $wgAjaxExportList[] = 'fnCategorySuggestAjax';
