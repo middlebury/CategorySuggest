@@ -55,7 +55,7 @@ global $wgOut, $wgParser;
 	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
 	if (!empty($catList))
 		$catList .= ';';
-	$m_pageObj->$m_place .= "<input onkeyup='sendRequest(this.value);' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' size='105' value='".$catList."'/>\n";
+	$m_pageObj->$m_place .= "<input onkeyup='sendRequest(this.value);' onkeydown='return checkSelect(this,event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' size='105' value='".$catList."'/>\n";
 	$m_pageObj->$m_place .=  '<br><div id="searchResults"></div>';
 		
 	//End DIV

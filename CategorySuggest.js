@@ -142,3 +142,59 @@ function addEvent(el, sEvt, PFnc)
 	    e.preventDefault? e.preventDefault() : e.returnValue = false; 
       //}
    }
+   
+function checkSelect(input, event) {
+	switch (event.keyCode) {
+		case 40: // Down Arrow
+		case 38: // Up Arrow
+			var resultDiv = document.getElementById('searchResults');
+			if (resultDiv.innerHTML.length) {
+				if (event.keyCode == 38)
+					highlightPrevious(resultDiv);
+				else
+					highlightNext(resultDiv);			
+			}
+			return false;
+		case 13: // Enter
+			var resultDiv = document.getElementById('searchResults');
+			var i = getHighlightedIndex(resultDiv);
+			if (i !== null) {
+				resultDiv.children[i].onmousedown();
+			}
+			return false;
+		default:
+			return true;
+	}
+}
+
+function getHighlightedIndex(resultDiv) {
+	for (var i = 0; i < resultDiv.children.length; i++) {
+		if (resultDiv.children[i].className == 'highlight')
+			return i;
+	}
+	return null;
+}
+
+function highlightPrevious(resultDiv) {
+	var i = getHighlightedIndex(resultDiv);
+	if (i === null) {
+		// Do nothing
+	} else if (i === 0) {
+		resultDiv.children[i].className = 'cs';
+	} else {
+		resultDiv.children[i].className = 'cs';
+		resultDiv.children[i - 1].className = 'highlight';
+	}
+}
+
+function highlightNext(resultDiv) {
+	var i = getHighlightedIndex(resultDiv);
+	if (i === null) {
+		resultDiv.children[0].className = 'highlight';
+	} else if (i == (resultDiv.children.length - 1)) {
+		// Do nothing
+	} else {
+		resultDiv.children[i].className = 'cs';
+		resultDiv.children[i + 1].className = 'highlight';
+	}
+}
