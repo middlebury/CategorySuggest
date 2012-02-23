@@ -72,7 +72,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for saving the page:
-function fnCategorySuggestSaveHook( $m_isUpload, &$m_pageObj ) {
+function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	global $wgContLang;
 	global $wgOut;
 	
@@ -109,7 +109,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, &$m_pageObj ) {
 
 /*************************************************************************************/
 ## Entry point for the CSS:
-function fnCategorySuggestOutputHook( &$m_pageObj, &$m_parserOutput ) {
+function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
 	global $wgScriptPath;
 
 	# Register CSS file for input box:
