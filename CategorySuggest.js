@@ -208,13 +208,13 @@ $.valHooks['textarea'] = {
 	    	var strExistingValues = document.getElementById('txtSelectedCategories').value;
 	    	// Eliminate any duplicate deliminators
 	    	strExistingValues = strExistingValues.replace(/;{2,}/g, ';');
-	    	// Eliminate any leading or trailing deliminators
-	    	strExistingValues = strExistingValues.replace(/^;|;$/g, '');
+	    	// Eliminate any leading or trailing deliminators and whitespace
+	    	strExistingValues = strExistingValues.replace(/^[;\s]+|[;\s]+$/g, '');
 	    	
-	    	var catStrings = strExistingValues.split(';');
-	    	if (catStrings.length) {
+	    	if (strExistingValues.length) {
+		    	var catStrings = strExistingValues.split(';');    	
 				for (var i in catStrings) {
-					catStrings[i] = "[[Category:" + catStrings[i] + "]]";
+					catStrings[i] = "[[Category:" + catStrings[i].replace(/^\s+|\s+$/g, '') + "]]";
 				}
 				return el.value + "\n" + catStrings.join("\n");
 			} else {
