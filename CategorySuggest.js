@@ -87,9 +87,9 @@ function selectEntry () {
 	  	if(strExistingValues.lastIndexOf(';')!=-1){
 			var intIndex = strExistingValues.lastIndexOf(';');
 			strExistingValues = strExistingValues.substr(0, intIndex+1);
-		  	document.getElementById('txtSelectedCategories').value = strExistingValues + this.name;
+		  	document.getElementById('txtSelectedCategories').value = strExistingValues + this.name + ';';
 		} else {
-			document.getElementById('txtSelectedCategories').value = this.name;		  				
+			document.getElementById('txtSelectedCategories').value = this.name + ';';		  				
 		}
 		document.getElementById('searchResults').style.visibility='hidden';
 		document.getElementById('searchResults').innerHTML='';

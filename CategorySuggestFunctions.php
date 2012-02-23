@@ -52,7 +52,10 @@ global $wgOut, $wgParser;
 	#ADD INPUT BOX FOR USERS TO ENTER CATEGORIES
 	$m_pageObj->$m_place .= "<div id='categoryselectmaster'\"><b>" .wfMsg( 'categorysuggest-title' )."</b><br>\n";
 	$m_pageObj->$m_place .= wfMsg( 'categorysuggest-subtitle' ). "<br>\n" .wfMsg( 'categorysuggest-boxlabel' );
-	$m_pageObj->$m_place .= "<input onkeyup='sendRequest(this.value);' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' size='105' value='".str_replace("_"," ",implode(";", $arrExistingCats))."'/>\n";
+	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
+	if (!empty($catList))
+		$catList .= ';';
+	$m_pageObj->$m_place .= "<input onkeyup='sendRequest(this.value);' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' size='105' value='".$catList."'/>\n";
 	$m_pageObj->$m_place .=  '<br><div id="searchResults"></div>';
 		
 	//End DIV

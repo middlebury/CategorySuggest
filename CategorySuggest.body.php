@@ -27,7 +27,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 		$m_isSubpage = $wgTitle->isSubpage();
 
 		# Check if page has been submitted already to Preview or Show Changes
-		$strCatsFromPreview = trim($wgRequest->getVal('txtSelectedCategories'));
+		$strCatsFromPreview = trim($wgRequest->getVal('txtSelectedCategories'), '; ');
 		if(strlen($strCatsFromPreview)==0){
 			# Extract all categorylinks from PAGE:
 			$m_pageCats = fnCategorySuggestGetPageCategories( $m_pageObj );
@@ -57,7 +57,10 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	$m_pageObj->$m_place .= "document.write(\"<div id='categoryselectmaster'><div><b>" .wfMsg( 'categorysuggest-title' ). "</b></div>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<p>" . wfMsg( 'categorysuggest-subtitle' ). "</p>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<table width='100%' style='position:relative'><tr><td><label for='txtSelectedCategories'>" .wfMsg( 'categorysuggest-boxlabel' ).":</label></td>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' length='150' value='".str_replace("_"," ",implode(";", $arrExistingCats))."'/>\");\n";	
+	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
+	if (!empty($catList))
+		$catList .= ';';
+	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' length='150' value='".$catList."'/>\");\n";	
 	$m_pageObj->$m_place .= "document.write(\"<br/><div id='searchResults'></div></div></td>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<td></td></tr></table>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' value='" . $wgCategorySuggestCloud . "' id='txtCSDisplayType'/>\");\n";	
