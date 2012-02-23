@@ -198,3 +198,30 @@ function highlightNext(resultDiv) {
 		resultDiv.children[i + 1].className = 'highlight';
 	}
 }
+
+// Hook into JQuery's val() method to add the categories to the textarea body for diffs.
+// This allows the "Changes" tab in the WikiEditor to display the correct changes
+// and not report all categories as removed.
+$.valHooks['textarea'] = {
+    get : function(el) {
+    	if (el.id == 'wpTextbox1') {
+	    	var strExistingValues = document.getElementById('txtSelectedCategories').value;
+	    	// Eliminate any duplicate deliminators
+	    	strExistingValues = strExistingValues.replace(/;{2,}/g, ';');
+	    	// Eliminate any leading or trailing deliminators
+	    	strExistingValues = strExistingValues.replace(/^;|;$/g, '');
+	    	
+	    	var catStrings = strExistingValues.split(';');
+	    	if (catStrings.length) {
+				for (var i in catStrings) {
+					catStrings[i] = "[[Category:" + catStrings[i] + "]]";
+				}
+				return el.value + "\n" + catStrings.join("\n");
+			} else {
+				return el.value;
+			}
+	    } else {
+	        return el.value;
+	    }
+    }
+};
