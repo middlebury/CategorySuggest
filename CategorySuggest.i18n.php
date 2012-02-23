@@ -4,6 +4,7 @@
 /* CategorySuggest Mediawiki Extension
  *
  * @author Andreas Rindler (mediawiki at jenandi dot com)
+ * @credits Jared Milbank, Leon Weber <leon.weber@leonweber.de>, Manuel Schneider <manuel.schneider@wikimedia.ch>, Daniel Friesen http://wiki-tools.com, Adam Franco <afranco@middlebury.edu>
  * @licence GNU General Public Licence 2.0 or later
  * @description 
  *
