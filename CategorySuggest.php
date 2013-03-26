@@ -65,7 +65,7 @@ function fnCategorySuggestAjax( $query ) {
 			"    cl_to AS cats\n".
 			"  FROM $categorylinks\n".
 			"  WHERE\n".
-			"    UCASE(cl_to) LIKE UCASE('".$searchString."%')\n";
+			"    UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE('".$searchString."%')\n";
 		$res = $dbr->query( $sql );
 		$suggestStrings = array();
 		for ( $i=0 ; $row = $dbr->fetchObject( $res )  ; $i++ ) {
