@@ -15,3 +15,8 @@ $messages['en']['categorysuggest-title']	= 'CATEGORY ASSIGNMENT';
 $messages['en']['categorysuggest-subtitle']	= 'Please enter the name of a category for this article.';
 $messages['en']['categorysuggest-boxlabel']	= 'Categories';
 $messages['en']['categorysuggest-taglabel']	= 'Popular Categories';
+
+$messages['de']['categorysuggest-title']        = 'KATEGORIE VERGABE';
+$messages['de']['categorysuggest-subtitle']     = 'Bitte fügen sie den Namen der Kategorie ein.';
+$messages['de']['categorysuggest-boxlabel']     = 'Kategorien';
+$messages['de']['categorysuggest-taglabel']     = 'Beliebte Kategorie';
