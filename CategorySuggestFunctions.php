@@ -34,7 +34,7 @@ global $wgOut, $wgParser;
 		# Never ever use editFormTextTop here as it resides outside the <form> so we will never get contents
 		$m_place = 'editFormTextAfterWarn';
 		# Print the localised title for the select box:
-		$m_textBefore = '<b>'. wfMsg( 'categorysuggest-title' ) . '</b>:';
+		$m_textBefore = '<b>'. wfMessage( 'categorysuggest-title' )->text() . '</b>:';
 	} else	{
 		# No need to get categories:
 		$m_pageCats = array();
@@ -51,8 +51,8 @@ global $wgOut, $wgParser;
 	$arrExistingCats = $m_pageCats;
  		
 	#ADD INPUT BOX FOR USERS TO ENTER CATEGORIES
-	$m_pageObj->$m_place .= "<div id='categoryselectmaster'\"><b>" .wfMsg( 'categorysuggest-title' )."</b><br>\n";
-	$m_pageObj->$m_place .= wfMsg( 'categorysuggest-subtitle' ). "<br>\n" .wfMsg( 'categorysuggest-boxlabel' );
+	$m_pageObj->$m_place .= "<div id='categoryselectmaster'\"><b>" .wfMessage( 'categorysuggest-title' )->text()."</b><br>\n";
+	$m_pageObj->$m_place .= wfMessage( 'categorysuggest-subtitle' )->text(). "<br>\n" .wfMessage( 'categorysuggest-boxlabel' )->text();
 	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
 	if (!empty($catList))
 		$catList .= ';';
