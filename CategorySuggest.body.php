@@ -60,7 +60,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
 	if (!empty($catList))
 		$catList .= ';';
-	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' onkeydown='return checkSelect(this, event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' length='150' value='".$catList."'/>\");\n";	
+	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' onkeydown='return checkSelect(this, event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' length='150' value='".$catList."'/>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<br/><div id='searchResults'></div></div></td>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<td></td></tr></table>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' value='" . $wgCategorySuggestCloud . "' id='txtCSDisplayType'/>\");\n";	
