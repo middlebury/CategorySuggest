@@ -38,7 +38,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 		# Never ever use editFormTextTop here as it resides outside the <form> so we will never get contents
 		$m_place = 'editFormTextAfterWarn';
 		# Print the localised title for the select box:
-		$m_textBefore = '<b>'. wfMsg( 'categorysuggest-title' ) . '</b>:';
+		$m_textBefore = '<b>'. wfMessage( 'categorysuggest-title' )->text() . '</b>:';
 	} else	{
 		# No need to get categories:
 		$m_pageCats = array();
