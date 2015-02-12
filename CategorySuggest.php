@@ -51,25 +51,20 @@ $wgAjaxExportList[] = 'fnCategorySuggestAjax';
 ## Entry point for Ajax, registered in $wgAjaxExportList; returns all cats starting with $query
 function fnCategorySuggestAjax( $query ) {
 	if(isset($query) && $query != NULL) {
-		$searchString = mysql_real_escape_string($query);
-		# % and _ are not escaped so do it here
-		$searchString = str_replace( '%' , '\%' , $searchString );
-		$searchString = str_replace( '_' , '\_' , $searchString );
-		$searchString = str_replace( '|' , '%' , $searchString );
-		$searchString = strtoupper($searchString);
-		$dbr =& wfGetDB( DB_SLAVE );
-		$categorylinks = $dbr->tableName('categorylinks');
-		$page          = $dbr->tableName('page');
-		$sql =
-			"SELECT DISTINCT\n".
-			"    cl_to AS cats\n".
-			"  FROM $categorylinks\n".
-			"  WHERE\n".
-			"    UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE('".$searchString."%')\n";
-		$res = $dbr->query( $sql );
+		$dbr = wfGetDB( DB_SLAVE );
+		$searchString = $dbr->buildLike($query, $dbr->anyString());
+		// Strip off the 'LIKE' clause so we can replace it with a case-changing command.
+		$searchString = preg_replace('/^\s*LIKE\s*/', '', $searchString);
+		$res = $dbr->select(
+			$dbr->tableName('categorylinks'),
+			array('cl_to'),
+			"UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE(".$searchString.")",
+			__METHOD__,
+			array('DISTINCT')
+		);
 		$suggestStrings = array();
-		for ( $i=0 ; $row = $dbr->fetchObject( $res )  ; $i++ ) {
-			array_push($suggestStrings,$row->cats);
+		foreach ($res as $row ) {
+			array_push($suggestStrings, $row->cl_to);
 ## Optional enhancement: Cutoff and rollover at max number of suggestions
 ## implement cutoff and rollover here
 #			if ($i > 10) {
@@ -90,7 +85,7 @@ function fnCategorySuggestAjax( $query ) {
 ## Set Hook:
 function fnCategorySuggest() {
 	global $wgHooks;
-	
+
 	## Showing the boxes
 	# Hook when starting editing:
 	$wgHooks['EditPage::showEditForm:initial'][] = array( 'fnCategorySuggestShowHook', false );
