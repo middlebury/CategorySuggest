@@ -77,7 +77,7 @@ function fnCategorySuggestAjax( $query ) {
 		$dbr->freeResult( $res );
 	}
 	if ( !isset($text) || $text == NULL ) {
-		$text = '<';
+		$text = '';
 	}
 	$response = new AjaxResponse($text);
 	return $response;
