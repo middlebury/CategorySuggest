@@ -136,9 +136,10 @@ global $wgOut;
 	$m_pageText = $m_pageObj->textbox1;
 
 	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
-	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>)#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
 	$nowikiStack = array(); // Stack for nowiki nested state.
 	$noincludeStack = array(); // Stack for nowiki nested state.
+	$templateStack = array(); // Stack for template nested state.
 	$foundCategories = array();
 	$outputText = '';
 	foreach ($blocks as $block) {
@@ -153,6 +154,11 @@ global $wgOut;
 			array_pop($noincludeStack);
 			continue;
 		}
+		if (!empty($templateStack) && $block == '}}') {
+			$outputText .= $block;
+			array_pop($templateStack);
+			continue;
+		}
 		// If we encounter a <nowiki> or <noinclude> tag, add it to our stacks.
 		if ($block == '<nowiki>') {
 			array_push($nowikiStack, true);
@@ -160,8 +166,11 @@ global $wgOut;
 		if ($block == '<noinclude>') {
 			array_push($noincludeStack, true);
 		}
+		if ($block == '{{') {
+			array_push($templateStack, true);
+		}
 		// Just pass through any content nested inside <nowiki> or <noinclude> tags.
-		if (!empty($nowikiStack) || !empty($noincludeStack)) {
+		if (!empty($nowikiStack) || !empty($noincludeStack) || !empty($templateStack)) {
 			$outputText .= $block;
 		}
 		// If we are outside noinclude or nowiki tags, pull out categories
