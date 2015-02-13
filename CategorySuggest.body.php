@@ -176,7 +176,7 @@ function fnCategorySuggestStripCats($texttostrip, &$catsintext){
 	# Get localised namespace string:
 	$m_catString = strtolower( $wgContLang->getNsText( NS_CATEGORY ) );
 	# The regular expression to find the category links:
-	$m_pattern = "\[\[({$m_catString}|category):(.*)\]\]";
+	$m_pattern = "\[\[({$m_catString}|category):([^\]]*)\]\]";
 	$m_replace = "$2";
 	# The container to store all found category links:
 	$m_catLinks = array ();
