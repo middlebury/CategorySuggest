@@ -42,18 +42,18 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	} else	{
 		# No need to get categories:
 		$m_pageCats = array();
-		
+
 		# Place output at the right place:
 		$m_place = 'uploadFormTextAfterSummary';
 	}
-		
-	#ADD EXISTING CATEGORIES TO INPUT BOX 
+
+	#ADD EXISTING CATEGORIES TO INPUT BOX
 	$arrExistingCats = array();
 	$arrExistingCats = $m_pageCats;
 
 	#ADD JAVASCRIPT - use document.write so it is not presented if javascript is disabled.
 	$m_pageObj->$m_place .= "<script type=\"text/javascript\" src=\"" . $wgCategorySuggestjs . "\"></script>\n";
-	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/\n";		
+	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/\n";
 	$m_pageObj->$m_place .= "document.write(\"<div id='categoryselectmaster'><div><b>" .wfMsg( 'categorysuggest-title' ). "</b></div>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<p>" . wfMsg( 'categorysuggest-subtitle' ). "</p>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<table width='100%' style='position:relative'><tr><td><label for='txtSelectedCategories'>" .wfMsg( 'categorysuggest-boxlabel' ).":</label></td>\");\n";
@@ -63,11 +63,11 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' onkeydown='return checkSelect(this, event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' length='150' value='".$catList."'/>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<br/><div id='searchResults'></div></div></td>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<td></td></tr></table>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' value='" . $wgCategorySuggestCloud . "' id='txtCSDisplayType'/>\");\n";	
-//	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' id='txtCSCats' name='txtCSCats' value='".str_replace("_"," ",implode(";", $arrExistingCats))."'/>\");\n";	
+	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' value='" . $wgCategorySuggestCloud . "' id='txtCSDisplayType'/>\");\n";
+//	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' id='txtCSCats' name='txtCSCats' value='".str_replace("_"," ",implode(";", $arrExistingCats))."'/>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"</div>\");\n";
 	$m_pageObj->$m_place .= "/*]]>*/</script>\n";
-	
+
 	return true;
 }
 
@@ -76,12 +76,12 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	global $wgContLang;
 	global $wgOut;
-	
+
 	# Get localised namespace string:
 	$m_catString = $wgContLang->getNsText( NS_CATEGORY );
 	# Get some distance from the rest of the content:
 	$m_text = "\n";
-	
+
 	# Assign all selected category entries:
 	$strSelectedCats = $_POST['txtSelectedCategories'];
 
@@ -89,7 +89,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	if(strlen($strSelectedCats)>1){
 		$arrSelectedCats = array();
 		$arrSelectedCats = explode(";",$_POST['txtSelectedCategories']);
-	
+
 	 	foreach( $arrSelectedCats as $m_cat ) {
 	 	 	if(strlen($m_cat)>0){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
@@ -101,10 +101,10 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 			$m_pageObj->mUploadDescription .= $m_text;
 		} else{
 			$m_pageObj->textbox1 .= $m_text;
-		}		
+		}
 	}
 	$wgOut->addHTML($m_text);
-	
+
 	# Return to the let MediaWiki do the rest of the work:
 	return true;
 }
@@ -148,7 +148,7 @@ global $wgOut;
 	# Get and strip categories from the first part
 	$cleanedtext = fnCategorySuggestStripCats($regulartext,$arrAllCats);
 	$finaltext .= $cleanedtext;
-	
+
 	# Go through the rest of the blocks to find more categories
 	for($i=1; $i<count($arrBlocks1); $i++){
 		$arrBlocks2 = explode( "</nowiki>", $arrBlocks1[$i] );
@@ -156,7 +156,7 @@ global $wgOut;
 		$nowikitext = $arrBlocks2[0];
 		//add to final text
 		$finaltext .= '<nowiki>' . $nowikitext . '</nowiki> ';
-		
+
 		//strip cats here because it's the text after the <nowiki> block
 		$regulartext = $arrBlocks2[1];
 		$cleanedtext = fnCategorySuggestStripCats($regulartext,$arrAllCats);
@@ -165,9 +165,9 @@ global $wgOut;
 
 	//Place cleaned text back into the text box:
 	$m_pageObj->textbox1 = rtrim( $finaltext );
-	
+
 	return $arrAllCats;
-	
+
 }
 
 function fnCategorySuggestStripCats($texttostrip, &$catsintext){
@@ -187,7 +187,7 @@ function fnCategorySuggestStripCats($texttostrip, &$catsintext){
 	# Check linewise for category links:
 	foreach( explode( "\n", $texttostrip ) as $m_textLine ) {
 		# Filter line through pattern and store the result:
-        $m_cleanText .= rtrim( preg_replace( "/{$m_pattern}/i", "", $m_textLine ) ) . "\n";        
+        $m_cleanText .= rtrim( preg_replace( "/{$m_pattern}/i", "", $m_textLine ) ) . "\n";
 
 		# Check if we have found a category, else proceed with next line:
         if( preg_match_all( "/{$m_pattern}/i", $m_textLine,$catsintext2,PREG_SET_ORDER) ){
@@ -197,15 +197,15 @@ function fnCategorySuggestStripCats($texttostrip, &$catsintext){
 				strtoupper($strFirstLetter);
 				$newString = strtoupper($strFirstLetter) . substr($m_prefix[2], 1);
 				array_push($catsintext,$newString);
-					 			
+
 	 		}
 			# Get the category link from the original text and store it in our list:
 			preg_replace( "/.*{$m_pattern}/i", $m_replace, $m_textLine,-1,$intNumber );
 		}
-		
+
 	}
 
-	return $m_cleanText;	
-	
+	return $m_cleanText;
+
 }
 ?>

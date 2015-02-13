@@ -8,19 +8,19 @@
 */
 
 // CATEGORY SUGGESTION FUNCTIONS
-// CALLED WITH CHARACTERS FROM USER INPUT    
+// CALLED WITH CHARACTERS FROM USER INPUT
 var csQuery = '';
 addEvent(document, "mouseup",keyPressHandler);
 
-function sendRequest(q,e) { 
+function sendRequest(q,e) {
 	if ([e.keyCode||e.which] == 27 ) {
 		var resultDiv = document.getElementById('searchResults');
 		resultDiv.style.visibility = 'hidden';
-	        e.preventDefault? e.preventDefault() : e.returnValue = false; 
+	        e.preventDefault? e.preventDefault() : e.returnValue = false;
 	}
 
 	// remove characters that don't work in category names
-	strQuery = new String(q.value);	
+	strQuery = new String(q.value);
 
 	//CUT OFF EXISTING, COMPLETE CATEGORIES
 	if(strQuery.lastIndexOf(';')!=-1){
@@ -34,7 +34,7 @@ function sendRequest(q,e) {
 		strQuery = strQueryR;
 		q.value = strQueryR;
 	}
-		
+
 
 	if ( strQuery.toString() != csQuery.toString() ) {
 		strQuery = strQuery.replace(/ /g,"_");
@@ -84,7 +84,7 @@ function sendRequest(q,e) {
 	}
 }
 
-        
+
 // SELECT CATEGORY FROM SUGGEST DIV AND ADD IT TO THE INPUT BOX
 function selectEntry () {
 	  	var strExistingValues = document.getElementById('txtSelectedCategories').value;
@@ -93,7 +93,7 @@ function selectEntry () {
 			strExistingValues = strExistingValues.substr(0, intIndex+1);
 		  	document.getElementById('txtSelectedCategories').value = strExistingValues + this.name + ';';
 		} else {
-			document.getElementById('txtSelectedCategories').value = this.name + ';';		  				
+			document.getElementById('txtSelectedCategories').value = this.name + ';';
 		}
 		document.getElementById('searchResults').style.visibility='hidden';
 		document.getElementById('searchResults').innerHTML='';
@@ -103,7 +103,7 @@ function selectEntry () {
 function highlight (){
 	this.className='highlight';
 }
-	
+
 function unHighlight (){
 	this.className='cs';
 }
@@ -143,10 +143,10 @@ function addEvent(el, sEvt, PFnc)
    function keyPressHandler(e) {
 		var resultDiv = document.getElementById('searchResults');
 		resultDiv.style.visibility = 'hidden';
-	    e.preventDefault? e.preventDefault() : e.returnValue = false; 
+	    e.preventDefault? e.preventDefault() : e.returnValue = false;
       //}
    }
-   
+
 function checkSelect(input, event) {
 	switch (event.keyCode) {
 		case 40: // Down Arrow
@@ -156,7 +156,7 @@ function checkSelect(input, event) {
 				if (event.keyCode == 38)
 					highlightPrevious(resultDiv);
 				else
-					highlightNext(resultDiv);			
+					highlightNext(resultDiv);
 			}
 			return false;
 		case 13: // Enter
@@ -214,9 +214,9 @@ $.valHooks['textarea'] = {
 	    	strExistingValues = strExistingValues.replace(/;{2,}/g, ';');
 	    	// Eliminate any leading or trailing deliminators and whitespace
 	    	strExistingValues = strExistingValues.replace(/^[;\s]+|[;\s]+$/g, '');
-	    	
+
 	    	if (strExistingValues.length) {
-		    	var catStrings = strExistingValues.split(';');    	
+		    	var catStrings = strExistingValues.split(';');
 				for (var i in catStrings) {
 					catStrings[i] = "[[Category:" + catStrings[i].replace(/^\s+|\s+$/g, '') + "]]";
 				}

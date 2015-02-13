@@ -23,7 +23,7 @@ if(isset($_GET['q'])) {
                 array_push($suggestStrings,$row['cats']);
         }
         echo implode(";",$suggestStrings);
-        
+
         //free up result set
         mysql_free_result($sql);
     }

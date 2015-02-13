@@ -38,18 +38,18 @@ global $wgOut, $wgParser;
 	} else	{
 		# No need to get categories:
 		$m_pageCats = array();
-		
+
 		# Place output at the right place:
 		$m_place = 'uploadFormTextAfterSummary';
 	}
-		
+
 	#ADD JAVASCRIPT
 	$m_pageObj->$m_place .= "<script type=\"text/javascript\" src=\"" . $wgScriptPath . "/extensions/CategorySuggest/CategorySuggest.js\"></script>\n";
-		
-	#ADD EXISTING CATEGORIES TO INPUT BOX 
+
+	#ADD EXISTING CATEGORIES TO INPUT BOX
 	$arrExistingCats = array();
 	$arrExistingCats = $m_pageCats;
- 		
+
 	#ADD INPUT BOX FOR USERS TO ENTER CATEGORIES
 	$m_pageObj->$m_place .= "<div id='categoryselectmaster'\"><b>" .wfMessage( 'categorysuggest-title' )->text()."</b><br>\n";
 	$m_pageObj->$m_place .= wfMessage( 'categorysuggest-subtitle' )->text(). "<br>\n" .wfMessage( 'categorysuggest-boxlabel' )->text();
@@ -58,10 +58,10 @@ global $wgOut, $wgParser;
 		$catList .= ';';
 	$m_pageObj->$m_place .= "<input onkeyup='sendRequest(this.value);' onkeydown='return checkSelect(this,event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' maxlength='200' size='105' value='".$catList."'/>\n";
 	$m_pageObj->$m_place .=  '<br><div id="searchResults"></div>';
-		
+
 	//End DIV
 	$m_pageObj->$m_place .= "<br></div><br>\n"; //category select master
-	
+
 	return true;
 }
 
@@ -70,12 +70,12 @@ global $wgOut, $wgParser;
 function fnCategorySuggestSaveHook( $m_isUpload, &$m_pageObj ) {
 	global $wgContLang;
 	global $wgOut;
-	
+
 	# Get localised namespace string:
 	$m_catString = $wgContLang->getNsText( NS_CATEGORY );
 	# Get some distance from the rest of the content:
 	$m_text = "\n";
-	
+
 	# Assign all selected category entries:
 	$strSelectedCats = $_POST['txtSelectedCategories'];
 
@@ -83,7 +83,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, &$m_pageObj ) {
 	if(strlen($strSelectedCats)>1){
 		$arrSelectedCats = array();
 		$arrSelectedCats = explode(";",$_POST['txtSelectedCategories']);
-	
+
 	 	foreach( $arrSelectedCats as $m_cat ) {
 	 	 	if(strlen($m_cat)>0){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
@@ -95,9 +95,9 @@ function fnCategorySuggestSaveHook( $m_isUpload, &$m_pageObj ) {
 			$m_pageObj->mUploadDescription .= $m_text;
 		} else{
 			$m_pageObj->textbox1 .= $m_text;
-		}		
+		}
 	}
-	
+
 	# Return to the let MediaWiki do the rest of the work:
 	return true;
 }
@@ -124,7 +124,7 @@ function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
 function fnCategorySuggestMessageHook() {
 	global $wgLang;
 	global $wgMessageCache;
-	
+
 	# Initialize array of all messages:
 	$messages=array();
 	# Load default messages (english):
@@ -135,7 +135,7 @@ function fnCategorySuggestMessageHook() {
 	}
 	# Put messages into message cache:
 	$wgMessageCache->addMessages( $messages );
-	
+
 	return true;
 }
 
@@ -159,17 +159,17 @@ $finaltext = '';
 	$regulartext = $arrBlocks1[0];
 
 	$cleanedtext = fnCategorySuggestStripCats($regulartext,$arrAllCats);
-	
+
 	$finaltext .= $cleanedtext;
 	//$finaltext .= '<nowiki>' . $nowikitext;
-	
+
 	for($i=1; $i<count($arrBlocks1); $i++){
 		$arrBlocks2 = explode( "</nowiki>", $arrBlocks1[$i] );
 		//ignore cats here
 		$nowikitext = $arrBlocks2[0];
 		//add to final text
 		$finaltext .= '<nowiki>' . $nowikitext . '</nowiki> ';
-		
+
 		//strip cats here
 		$regulartext = $arrBlocks2[1];
 		$cleanedtext = fnAjaxSuggestStripCats($regulartext,$arrAllCats);
@@ -178,9 +178,9 @@ $finaltext = '';
 
 	//Place cleaned text back into the text box:
 	$m_pageObj->textbox1 = trim( $finaltext );
-	
+
 	return $arrAllCats;
-	
+
 }
 
 function fnCategorySuggestStripCats($texttostrip, &$catsintext){
@@ -210,16 +210,16 @@ function fnCategorySuggestStripCats($texttostrip, &$catsintext){
 				strtoupper($strFirstLetter);
 				$newString = strtoupper($strFirstLetter) . substr($m_prefix[2], 1);
 				array_push($catsintext,$newString);
-					 			
+
 	 		}
 			# Get the category link from the original text and store it in our list:
 			preg_replace( "/.*{$m_pattern}/i", $m_replace, $m_textLine,-1,$intNumber );
 		}
-		
+
 	}
 
-	return $m_cleanText;	
-	
+	return $m_cleanText;
+
 }
 
 ?>
