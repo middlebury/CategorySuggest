@@ -53,12 +53,12 @@ function sendRequest(q,e) {
 			resultDiv.style.display = 'block';
 			// remove extra chars from sajax (should use delimiters to find this)
 			//resultSet = resultSet.substr(10);
-			if (!data || data == "<" ) {
+			if (!data || data == "\n" ) {
 				resultDiv.style.display = 'none';
 			} else {
 				resultDiv.style.visibility = 'visible';
 				wideResult = false;
-				data = data.split("<");
+				data = data.split("\n");
 				for (var f=0; f<data.length; ++f) {
 					if ( displayType != 'Cloud' ) {
 						var result=document.createElement("p");

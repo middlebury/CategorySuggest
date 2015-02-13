@@ -73,7 +73,7 @@ function fnCategorySuggestAjax( $query ) {
 #				break;
 #			}
 		}
-	        $text = implode("<",$suggestStrings);
+	        $text = implode("\n",$suggestStrings);
 		$dbr->freeResult( $res );
 	}
 	if ( !isset($text) || $text == NULL ) {
