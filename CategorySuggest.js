@@ -39,45 +39,49 @@ function sendRequest(q,e) {
 	if ( strQuery.toString() != csQuery.toString() ) {
 		strQuery = strQuery.replace(/ /g,"_");
 		csQuery = strQuery;
-		sajax_debug_mode = false;
-		sajax_do_call( "fnCategorySuggestAjax", [ strQuery ], ajaxResponse );
+		$.get(
+			mw.util.wikiScript(),
+			{
+				action: 'ajax',
+				rs: 'fnCategorySuggestAjax',
+				rsargs: [ strQuery ]
+			}
+		).done(function (data, textStatus, response) {
+			var resultDiv = document.getElementById('searchResults');
+			displayType = document.getElementById('txtCSDisplayType').name;
+			resultDiv.innerHTML = '';
+			resultDiv.style.display = 'block';
+			// remove extra chars from sajax (should use delimiters to find this)
+			//resultSet = resultSet.substr(10);
+			if (!data || data == "<" ) {
+				resultDiv.style.display = 'none';
+			} else {
+				resultDiv.style.visibility = 'visible';
+				wideResult = false;
+				data = data.split("<");
+				for (var f=0; f<data.length; ++f) {
+					if ( displayType != 'Cloud' ) {
+						var result=document.createElement("p");
+					}
+					else {
+						var result=document.createElement("span");
+					}
+					result.name = data[f].replace(/_/g," ");
+					csWord = result.name;
+
+					csHTML = '<span class="csSelect">' + csWord.substr(0, csQuery.length) + '</span>' + csWord.substr(csQuery.length) + " ";
+					result.innerHTML = csHTML;
+					result.onmouseover = highlight;
+					result.onmouseout = unHighlight;
+					result.onmousedown = selectEntry;
+					result.title = 'Click here to add category to the category list!';
+					result.className="cs";
+					resultDiv.style.lineHeight='1';
+					resultDiv.appendChild(result);
+				}
+			}
+		});
 	}
-}
-// WAIT FOR SERVER RESPONSE AND DISPLAY SUGGESTIONS    
-ajaxResponse = function handleResponse(response) { 
-	resultSet = response.responseText;
-	var resultDiv = document.getElementById('searchResults');
-	displayType = document.getElementById('txtCSDisplayType').name;
-	resultDiv.innerHTML = '';
-	resultDiv.style.display = 'block';
-	// remove extra chars from sajax (should use delimiters to find this)
-	//resultSet = resultSet.substr(10);
-	if (!resultSet || resultSet == "<" ) resultDiv.style.display = 'none';
-	else{
-		resultDiv.style.visibility = 'visible';
-		wideResult = false;
-		resultSet = resultSet.split("<");
-		for(var f=0; f<resultSet.length; ++f){
-			if ( displayType != 'Cloud' ) {
-				var result=document.createElement("p");
-			}
-			else {
-				var result=document.createElement("span");
-			}
-			result.name = resultSet[f].replace(/_/g," ");
-			csWord = result.name;
-			
-			csHTML = '<span class="csSelect">' + csWord.substr(0, csQuery.length) + '</span>' + csWord.substr(csQuery.length) + " ";
-			result.innerHTML = csHTML;
-			result.onmouseover = highlight;
-			result.onmouseout = unHighlight;
-			result.onmousedown = selectEntry;
-			result.title = 'Click here to add category to the category list!';
-			result.className="cs";
-			resultDiv.style.lineHeight='1';
-			resultDiv.appendChild(result);  
-		}
-	}        
 }
 
         
