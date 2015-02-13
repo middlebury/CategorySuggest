@@ -135,38 +135,45 @@ global $wgOut;
 	# Get page contents:
 	$m_pageText = $m_pageObj->textbox1;
 
-	$arrAllCats = Array();
-	$regulartext ='';
-	$nowikitext = '';
-	$cleanedtext ='';
-	$finaltext = '';
-	# Check linewise for category links:
-	# Get the first part of the text up until the first <nowiki> tag.
-	$arrBlocks1 = explode( "<nowiki>", $m_pageText );
-	$regulartext = $arrBlocks1[0];
-
-	# Get and strip categories from the first part
-	$cleanedtext = fnCategorySuggestStripCats($regulartext,$arrAllCats);
-	$finaltext .= $cleanedtext;
-
-	# Go through the rest of the blocks to find more categories
-	for($i=1; $i<count($arrBlocks1); $i++){
-		$arrBlocks2 = explode( "</nowiki>", $arrBlocks1[$i] );
-		//ignore cats here because it is part of the <nowiki> block
-		$nowikitext = $arrBlocks2[0];
-		//add to final text
-		$finaltext .= '<nowiki>' . $nowikitext . '</nowiki> ';
-
-		//strip cats here because it's the text after the <nowiki> block
-		$regulartext = $arrBlocks2[1];
-		$cleanedtext = fnCategorySuggestStripCats($regulartext,$arrAllCats);
-		$finaltext .= ltrim($cleanedtext);
+	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
+	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>)#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$nowikiStack = array(); // Stack for nowiki nested state.
+	$noincludeStack = array(); // Stack for nowiki nested state.
+	$foundCategories = array();
+	$outputText = '';
+	foreach ($blocks as $block) {
+		// If we encounter a closing </nowiki> or </noinclude> tag, remove them from our stack and continue.
+		if (!empty($nowikiStack) && $block == '</nowiki>') {
+			$outputText .= $block;
+			array_pop($nowikiStack);
+			continue;
+		}
+		if (!empty($noincludeStack) && $block == '</noinclude>') {
+			$outputText .= $block;
+			array_pop($noincludeStack);
+			continue;
+		}
+		// If we encounter a <nowiki> or <noinclude> tag, add it to our stacks.
+		if ($block == '<nowiki>') {
+			array_push($nowikiStack, true);
+		}
+		if ($block == '<noinclude>') {
+			array_push($noincludeStack, true);
+		}
+		// Just pass through any content nested inside <nowiki> or <noinclude> tags.
+		if (!empty($nowikiStack) || !empty($noincludeStack)) {
+			$outputText .= $block;
+		}
+		// If we are outside noinclude or nowiki tags, pull out categories
+		else {
+			$outputText .= fnCategorySuggestStripCats($block, $foundCategories);
+		}
 	}
 
 	//Place cleaned text back into the text box:
-	$m_pageObj->textbox1 = rtrim( $finaltext );
+	$m_pageObj->textbox1 = trim( $outputText );
 
-	return $arrAllCats;
+	return $foundCategories;
 
 }
 
