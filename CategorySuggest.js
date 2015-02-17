@@ -76,7 +76,7 @@ function sendRequest(q,e) {
 					result.onmouseover = highlight;
 					result.onmouseout = unHighlight;
 					result.onmousedown = selectEntry;
-					result.title = 'Click here to add category to the category list!';
+					result.title = categorysuggestSelect;
 					result.className="cs";
 					resultDiv.style.lineHeight='1';
 					resultDiv.appendChild(result);
