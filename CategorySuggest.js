@@ -35,6 +35,8 @@ function sendRequest(q,e) {
 		q.value = strQueryR;
 	}
 
+	// Remove leading spaces
+	strQuery = strQuery.replace(/^ /, "");
 
 	if ( strQuery.toString() != csQuery.toString() ) {
 		strQuery = strQuery.replace(/ /g,"_");
