@@ -58,6 +58,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	$m_pageObj->$m_place .= "document.write(\"<p>" . wfMsg( 'categorysuggest-subtitle' ). "</p>\");\n";
 	$m_pageObj->$m_place .= "document.write(\"<table width='100%' style='position:relative'><tr><td><label for='txtSelectedCategories'>" .wfMsg( 'categorysuggest-boxlabel' ).":</label></td>\");\n";
 	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
+	$catList = str_replace("'", "&#039;", $catList);
 	if (!empty($catList))
 		$catList .= ';';
 	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' onkeydown='return checkSelect(this, event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' length='150' value='".$catList."'/>\");\n";
@@ -93,7 +94,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	 	foreach( $arrSelectedCats as $m_cat ) {
 	 	 	if(strlen($m_cat)>0){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
-				$m_text .= "\n[[$m_catString:" . mysql_escape_string(trim($m_cat)) . "]]";
+				$m_text .= "\n[[$m_catString:" . trim($m_cat) . "]]";
 			}
 		}
 		# If it is an upload we have to call a different method:
