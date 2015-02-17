@@ -24,7 +24,7 @@ if ( !$wgUseAjax ) {
 #  these can be set in local settings.php _after_ including this function
 #
 # $wgCategorySuggestjs, $wgCategorySuggestcss - paths to script and css files if needed to be moved elsewhere
-# $wgCategorySuggestNumToSend  - max number of suggestions to send to browser - not implemented
+# $wgCategorySuggestNumToSend  - max number of suggestions to send to browser
 # $wgCategorySuggestUnaddedWarning - not implemented
 # $wgCategorySuggestCloud : cloud - use cloud ; anything else - list
 #
@@ -51,6 +51,7 @@ $wgAjaxExportList[] = 'fnCategorySuggestAjax';
 
 ## Entry point for Ajax, registered in $wgAjaxExportList; returns all cats starting with $query
 function fnCategorySuggestAjax( $query ) {
+	global $wgCategorySuggestNumToSend;
 	if(isset($query) && $query != NULL) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$searchString = $dbr->buildLike($query, $dbr->anyString());
@@ -61,7 +62,7 @@ function fnCategorySuggestAjax( $query ) {
 			array('cl_to'),
 			"UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE(".$searchString.")",
 			__METHOD__,
-			array('DISTINCT')
+			array('DISTINCT', 'LIMIT' => $wgCategorySuggestNumToSend)
 		);
 		$suggestStrings = array();
 		foreach ($res as $row ) {
