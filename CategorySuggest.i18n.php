@@ -16,7 +16,7 @@ $messages = array(
 		'categorysuggest-subtitle' => 'Please enter the name of a category for this article.',
 		'categorysuggest-boxlabel' => 'Categories',
 		'categorysuggest-taglabel' =>'Popular Categories',
-		'categorysuggest-select' => 'Click here to add category to the category list for this page!'
+		'categorysuggest-select' => 'Click here to add category to the list for this page!'
 	),
 
 	'de' => array(
@@ -24,7 +24,7 @@ $messages = array(
 		'categorysuggest-subtitle' => 'Bitte fügen Sie den Namen der Kategorie ein.',
 		'categorysuggest-boxlabel' => 'Kategorien',
 		'categorysuggest-taglabel' => 'Beliebte Kategorie',
-		'categorysuggest-select' => 'Klicken Sie hier, um die Kategorie in der Kategorieliste für diese Seite!'
+		'categorysuggest-select' => 'Klicken Sie hier, um die Kategorie in der Kategorieliste für diese Seite!' // translation attempt (not mother language)
 	),
 
 	'fr' => array(
@@ -32,7 +32,7 @@ $messages = array(
 		'categorysuggest-subtitle' => 'Veuillez saisir le nom d\'une catégorie (tag) pour cet article.',
 		'categorysuggest-boxlabel' => 'Catégories',
 		'categorysuggest-taglabel' => 'Catégories populaires',
-		'categorysuggest-select' => 'Cliquez pour ajouter cette catégorie à la liste pour la page!'
+		'categorysuggest-select' => 'Cliquez pour ajouter cette catégorie à la liste pour la page!' // translation attempt (not mother language)
   	),
 
   	'it' => array(
