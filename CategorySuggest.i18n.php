@@ -27,15 +27,15 @@ $messages = array(
 		'categorysuggest-select' => 'Klicken Sie hier, um die Kategorie in der Kategorieliste für diese Seite!'
 	),
 
-  'fr' => array(
-    'categorysuggest-title' => 'CHOIX DES CATEGORIES (tags)',
-    'categorysuggest-subtitle' => 'Veuillez saisir le nom d\'une catégorie (tag) pour cet article.',
-    'categorysuggest-boxlabel' => 'Catégories',
-    'categorysuggest-taglabel' => 'Catégories populaires'
-    'categorysuggest-select' => 'Cliquez pour ajouter cette catégorie à la liste pour la page!'
-  ),
+	'fr' => array(
+		'categorysuggest-title' => 'CHOIX DES CATEGORIES (tags)',
+		'categorysuggest-subtitle' => 'Veuillez saisir le nom d\'une catégorie (tag) pour cet article.',
+		'categorysuggest-boxlabel' => 'Catégories',
+		'categorysuggest-taglabel' => 'Catégories populaires',
+		'categorysuggest-select' => 'Cliquez pour ajouter cette catégorie à la liste pour la page!'
+  	),
 
-  'it' => array(
+  	'it' => array(
 		'categorysuggest-title' => 'ASSEGNAZIONE CATEGORIE',
 		'categorysuggest-subtitle' => 'Digitare il nome di una categoria per questo articolo.',
 		'categorysuggest-boxlabel' => 'Categorie',
