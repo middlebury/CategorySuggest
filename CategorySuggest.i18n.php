@@ -9,19 +9,37 @@
  * @description
  *
 */
-$messages = array();
+$messages = array(
 
-$messages['en']['categorysuggest-title']	= 'CATEGORY ASSIGNMENT';
-$messages['en']['categorysuggest-subtitle']	= 'Please enter the name of a category for this article.';
-$messages['en']['categorysuggest-boxlabel']	= 'Categories';
-$messages['en']['categorysuggest-taglabel']	= 'Popular Categories';
+	'en' => array(
+		'categorysuggest-title' => 'CATEGORY ASSIGNMENT',
+		'categorysuggest-subtitle' => 'Please enter the name of a category for this article.',
+		'categorysuggest-boxlabel' => 'Categories',
+		'categorysuggest-taglabel' =>'Popular Categories',
+		'categorysuggest-select' => 'Click here to add category to the list for this page!'
+	),
 
-$messages['de']['categorysuggest-title']        = 'KATEGORIE VERGABE';
-$messages['de']['categorysuggest-subtitle']     = 'Bitte fügen Sie den Namen der Kategorie ein.';
-$messages['de']['categorysuggest-boxlabel']     = 'Kategorien';
-$messages['de']['categorysuggest-taglabel']     = 'Beliebte Kategorie';
+	'de' => array(
+		'categorysuggest-title' => 'KATEGORIE VERGABE',
+		'categorysuggest-subtitle' => 'Bitte fügen Sie den Namen der Kategorie ein.',
+		'categorysuggest-boxlabel' => 'Kategorien',
+		'categorysuggest-taglabel' => 'Beliebte Kategorie',
+		'categorysuggest-select' => 'Klicken Sie hier, um die Kategorie in der Kategorieliste für diese Seite!' // translation attempt (not mother language)
+	),
 
-$messages['fr']['categorysuggest-title']        = 'CHOIX DES CATEGORIES (tags)';
-$messages['fr']['categorysuggest-subtitle']     = 'Veuillez saisir le nom d\'une catégorie (tag) pour cet article.';
-$messages['fr']['categorysuggest-boxlabel']     = 'Catégories';
-$messages['fr']['categorysuggest-taglabel']     = 'Catégories populaires';
+	'fr' => array(
+		'categorysuggest-title' => 'CHOIX DES CATEGORIES (tags)',
+		'categorysuggest-subtitle' => 'Veuillez saisir le nom d\'une catégorie (tag) pour cet article.',
+		'categorysuggest-boxlabel' => 'Catégories',
+		'categorysuggest-taglabel' => 'Catégories populaires',
+		'categorysuggest-select' => 'Cliquez pour ajouter cette catégorie à la liste pour la page!' // translation attempt (not mother language)
+  	),
+
+  	'it' => array(
+		'categorysuggest-title' => 'ASSEGNAZIONE CATEGORIE',
+		'categorysuggest-subtitle' => 'Digitare il nome di una categoria per questo articolo.',
+		'categorysuggest-boxlabel' => 'Categorie',
+		'categorysuggest-taglabel' => 'Categorie più utilizzate',
+		'categorysuggest-select' => 'Clicca per aggiungere la categoria all\'elenco per questa pagina!'
+	)
+);

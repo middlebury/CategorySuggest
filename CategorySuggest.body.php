@@ -52,6 +52,7 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	$arrExistingCats = $m_pageCats;
 
 	#ADD JAVASCRIPT - use document.write so it is not presented if javascript is disabled.
+	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/ var categorysuggestSelect = \"". wfMessage( 'categorysuggest-select' )->text() ."\"; /*]]>*/</script>\n";
 	$m_pageObj->$m_place .= "<script type=\"text/javascript\" src=\"" . $wgCategorySuggestjs . "\"></script>\n";
 	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/\n";
 	$m_pageObj->$m_place .= "document.write(\"<div id='categoryselectmaster'><div><b>" .wfMsg( 'categorysuggest-title' ). "</b></div>\");\n";
