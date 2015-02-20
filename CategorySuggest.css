@@ -42,6 +42,7 @@
 
 input#txtSelectedCategories {
 	width: 95%;
+	margin-bottom:0;
 }
 
 .tooltip {
