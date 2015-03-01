@@ -9,16 +9,17 @@
 */
 
 if( !defined( 'MEDIAWIKI' ) ) {
-	echo( "This file is an extension to the MediaWiki software and cannot be used standalone.\n" );
-	die();
+	die('This file is an extension to the MediaWiki software and cannot be used standalone.');
 }
 
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
-global $wgOut, $wgParser, $wgTitle, $wgRequest;
+	global $wgContLang, $wgOut, $wgParser, $wgTitle, $wgRequest;
 	global $wgTitle, $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
 
+	# Get localised namespace string:
+	$m_catString = $wgContLang->getNsText( NS_CATEGORY );
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
 	# Get the right member variables, depending on if we're on an upload form or not:
@@ -28,47 +29,41 @@ global $wgOut, $wgParser, $wgTitle, $wgRequest;
 
 		# Check if page has been submitted already to Preview or Show Changes
 		$strCatsFromPreview = trim($wgRequest->getVal('txtSelectedCategories'), '; ');
-		if(strlen($strCatsFromPreview)==0){
-			# Extract all categorylinks from PAGE:
-			$m_pageCats = fnCategorySuggestGetPageCategories( $m_pageObj );
-		} else {
+		# Extract all categorylinks from PAGE:
+		$catList = fnCategorySuggestGetPageCategories( $m_pageObj );
+		if(strlen($strCatsFromPreview) > 0){
 		 	# Get cats from preview
-			$m_pageCats = explode(";",$strCatsFromPreview);
+			$catList = array_merge($catList,explode(';',$strCatsFromPreview));
 		}
+		# Check for duplicate
+		$catList = array_unique($catList);
 		# Never ever use editFormTextTop here as it resides outside the <form> so we will never get contents
 		$m_place = 'editFormTextAfterWarn';
 		# Print the localised title for the select box:
-		$m_textBefore = '<b>'. wfMessage( 'categorysuggest-title' )->text() . '</b>:';
 	} else	{
 		# No need to get categories:
-		$m_pageCats = array();
+		$catList = array();
 
 		# Place output at the right place:
 		$m_place = 'uploadFormTextAfterSummary';
 	}
 
-	#ADD EXISTING CATEGORIES TO INPUT BOX
-	$arrExistingCats = array();
-	$arrExistingCats = $m_pageCats;
-
-	#ADD JAVASCRIPT - use document.write so it is not presented if javascript is disabled.
-	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/ var categorysuggestSelect = \"". wfMessage( 'categorysuggest-select' )->text() ."\"; /*]]>*/</script>\n";
-	$m_pageObj->$m_place .= "<script type=\"text/javascript\" src=\"" . $wgCategorySuggestjs . "\"></script>\n";
-	$m_pageObj->$m_place .= "<script type=\"text/javascript\">/*<![CDATA[*/\n";
-	$m_pageObj->$m_place .= "document.write(\"<div id='categoryselectmaster'><div><b>" .wfMsg( 'categorysuggest-title' ). "</b></div>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<p>" . wfMsg( 'categorysuggest-subtitle' ). "</p>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<table width='100%' style='position:relative'><tr><td><label for='txtSelectedCategories'>" .wfMsg( 'categorysuggest-boxlabel' ).":</label></td>\");\n";
-	$catList = str_replace("_"," ",implode(";", $arrExistingCats));
-	$catList = str_replace("'", "&#039;", $catList);
-	if (!empty($catList))
-		$catList .= ';';
-	$m_pageObj->$m_place .= "document.write(\"<td width=100%><div style='position:relative' width='100%'><input onkeyup='sendRequest(this,event);' onkeydown='return checkSelect(this, event)' autocomplete='off' type='text' name='txtSelectedCategories' id='txtSelectedCategories' length='150' value='".$catList."'/>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<br/><div id='searchResults'></div></div></td>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<td></td></tr></table>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' value='" . $wgCategorySuggestCloud . "' id='txtCSDisplayType'/>\");\n";
-//	$m_pageObj->$m_place .= "document.write(\"<input type='hidden' id='txtCSCats' name='txtCSCats' value='".str_replace("_"," ",implode(";", $arrExistingCats))."'/>\");\n";
-	$m_pageObj->$m_place .= "document.write(\"</div>\");\n";
-	$m_pageObj->$m_place .= "/*]]>*/</script>\n";
+	$catList = htmlspecialchars(str_replace('_',' ',implode(';', $catList)));
+	if (!empty($catList)) {
+		$catList .= ';';		
+	}
+	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage( 'categorysuggest-select' )->text() .'"; var catString = "'. $m_catString .'"; /*]]>*/</script>' .
+		'<script type="text/javascript" src="' . $wgCategorySuggestjs . '"></script>' .
+		'<div id="categoryselectmaster"><div><b>' .wfMsg( 'categorysuggest-title' ). '</b></div>' .
+		'<table><caption>' . wfMsg( 'categorysuggest-subtitle' ). '</caption><tbody>' .
+		'<tr><th><label for="txtSelectedCategories">' .wfMsg( 'categorysuggest-boxlabel' ).':</label></th>' .
+		'<td><div><input onkeyup="sendRequest(this,event);" onkeydown="return checkSelect(this, event)" autocomplete="off" type="text" name="txtSelectedCategories" id="txtSelectedCategories" length="150" value="'. $catList .'" />' .
+		'<br/><div id="searchResults"></div></div></td>' .
+		'<td></td></tr></tbody></table>' .
+		'<input type="hidden" value="' . $wgCategorySuggestCloud . '" id="txtCSDisplayType" />' .
+//		'<input type="hidden" id="txtCSCats" name="txtCSCats" value="'. catList .'" />' .
+		'</div>';
+	$m_pageObj->$m_place .= $extCategoryField;
 
 	return true;
 }
@@ -95,17 +90,13 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	 	foreach( $arrSelectedCats as $m_cat ) {
 	 	 	if(strlen($m_cat)>0){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
-				$m_text .= "\n[[$m_catString:" . trim($m_cat) . "]]";
+				$m_text .= "\n[[". $m_catString .":" . mysql_escape_string(trim($m_cat)) . "]]";
 			}
 		}
 		# If it is an upload we have to call a different method:
-		if ( $m_isUpload ) {
-			$m_pageObj->mUploadDescription .= $m_text;
-		} else{
-			$m_pageObj->textbox1 .= $m_text;
-		}
+		$body = ($m_isUpload) ? $m_pageObj->mUploadDescription : $m_pageObj->textbox1; 
+		$body .= $m_text;
 	}
-	$wgOut->addHTML($m_text);
 
 	# Return to the let MediaWiki do the rest of the work:
 	return true;
@@ -138,10 +129,9 @@ global $wgOut;
 	$m_pageText = $m_pageObj->textbox1;
 
 	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
-	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>|<includeonly>|</includeonly>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
 	$nowikiStack = array(); // Stack for nowiki nested state.
-	$noincludeStack = array(); // Stack for noinclude nested state.
-	$includeonlyStack = array(); // Stack for includeonly nested state.
+	$noincludeStack = array(); // Stack for nowiki nested state.
 	$templateStack = array(); // Stack for template nested state.
 	$foundCategories = array();
 	$outputText = '';
@@ -157,11 +147,6 @@ global $wgOut;
 			array_pop($noincludeStack);
 			continue;
 		}
-		if (!empty($includeonlyStack) && $block == '</includeonly>') {
-			$outputText .= $block;
-			array_pop($includeonlyStack);
-			continue;
-		}
 		if (!empty($templateStack) && $block == '}}') {
 			$outputText .= $block;
 			array_pop($templateStack);
@@ -174,14 +159,11 @@ global $wgOut;
 		if ($block == '<noinclude>') {
 			array_push($noincludeStack, true);
 		}
-		if ($block == '<includeonly>') {
-			array_push($includeonlyStack, true);
-		}
 		if ($block == '{{') {
 			array_push($templateStack, true);
 		}
 		// Just pass through any content nested inside <nowiki> or <noinclude> tags.
-		if (!empty($nowikiStack) || !empty($noincludeStack) || !empty($includeonlyStack) || !empty($templateStack)) {
+		if (!empty($nowikiStack) || !empty($noincludeStack) || !empty($templateStack)) {
 			$outputText .= $block;
 		}
 		// If we are outside noinclude or nowiki tags, pull out categories
