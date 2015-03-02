@@ -12,6 +12,8 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die('This file is an extension to the MediaWiki software and cannot be used standalone.');
 }
 
+$foundCategories = array();
+
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
@@ -31,7 +33,7 @@ function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
 		$strCatsFromPreview = trim($wgRequest->getVal('txtSelectedCategories'), '; ');
 		# Extract all categorylinks from PAGE:
 		$catList = fnCategorySuggestGetPageCategories( $m_pageObj );
-		if(strlen($strCatsFromPreview) > 0){
+		if($strCatsFromPreview){
 		 	# Get cats from preview
 			$catList = array_merge($catList,explode(';',$strCatsFromPreview));
 		}
@@ -79,23 +81,22 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	# Get some distance from the rest of the content:
 	$m_text = "\n";
 
-	# Assign all selected category entries:
-	$strSelectedCats = $_POST['txtSelectedCategories'];
-
 	#CHECK IF USER HAS SELECTED ANY CATEGORIES
-	if(strlen($strSelectedCats)>1){
-		$arrSelectedCats = array();
-		$arrSelectedCats = explode(";",$_POST['txtSelectedCategories']);
+	if($_POST['txtSelectedCategories']){
+		$arrSelectedCats = explode(';',$_POST['txtSelectedCategories']);
 
 	 	foreach( $arrSelectedCats as $m_cat ) {
-	 	 	if(strlen($m_cat)>0){
+	 	 	if($m_cat){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
 				$m_text .= "\n[[". $m_catString .":" . mysql_escape_string(trim($m_cat)) . "]]";
 			}
 		}
 		# If it is an upload we have to call a different method:
-		$body = ($m_isUpload) ? $m_pageObj->mUploadDescription : $m_pageObj->textbox1; 
-		$body .= $m_text;
+		if ( $m_isUpload ) {
+			$m_pageObj->mUploadDescription .= $m_text;
+		} else{
+			$m_pageObj->textbox1 .= $m_text;
+		}
 	}
 
 	# Return to the let MediaWiki do the rest of the work:
@@ -123,61 +124,63 @@ function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
 ## Returns an array with the categories the articles is in.
 ## Also removes them from the text the user views in the editbox.
 function fnCategorySuggestGetPageCategories( $m_pageObj ) {
-global $wgOut;
+	global $wgOut, $foundCategories;
 
 	# Get page contents:
 	$m_pageText = $m_pageObj->textbox1;
 
 	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
-	$blocks = preg_split('#(<nowiki>|</nowiki>|<noinclude>|</noinclude>|<includeonly>|</includeonly>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
-	$nowikiStack = array(); // Stack for nowiki nested state.
-	$noincludeStack = array(); // Stack for noinclude nested state.
-	$includeonlyStack = array(); // Stack for includeonly nested state.
-	$templateStack = array(); // Stack for template nested state.
+	$blocks = preg_split('#(</?(nowiki|noinclude|includeonly|onlyinclude)>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$stacklist = array(
+		'nowiki' => array(), // Stack for nowiki nested state.
+		'noinclude' => array(), // Stack for noinclude nested state.
+		'includeonly' => array(), // Stack for includeonly nested state.
+		'onlyinclude' => array(), // Stack for onlyinclude nested state.
+		'template' => array() // Stack for template nested state.
+	);
 	$foundCategories = array();
 	$outputText = '';
-	foreach ($blocks as $block) {
-		// If we encounter a closing </nowiki>, </noinclude> or </includeonly> tag, remove them from our stack and continue.
-		if (!empty($nowikiStack) && $block == '</nowiki>') {
-			$outputText .= $block;
-			array_pop($nowikiStack);
-			continue;
-		}
-		if (!empty($noincludeStack) && $block == '</noinclude>') {
-			$outputText .= $block;
-			array_pop($noincludeStack);
-			continue;
-		}
-		if (!empty($includeonlyStack) && $block == '</includeonly>') {
-			$outputText .= $block;
-			array_pop($includeonlyStack);
-			continue;
-		}
-		if (!empty($templateStack) && $block == '}}') {
-			$outputText .= $block;
-			array_pop($templateStack);
-			continue;
-		}
-		// If we encounter a <nowiki> or <noinclude> tag, add it to our stacks.
-		if ($block == '<nowiki>') {
-			array_push($nowikiStack, true);
-		}
-		if ($block == '<noinclude>') {
-			array_push($noincludeStack, true);
-		}
-		if ($block == '<includeonly>') {
-			array_push($includeonlyStack, true);
-		}
-		if ($block == '{{') {
-			array_push($templateStack, true);
-		}
-		// Just pass through any content nested inside <nowiki>, <noinclude>, <includeonly> tags or template delimiters.
-		if (!empty($nowikiStack) || !empty($noincludeStack) || !empty($includeonlyStack) || !empty($templateStack)) {
-			$outputText .= $block;
-		}
-		// If we are outside noinclude or nowiki tags, pull out categories
-		else {
-			$outputText .= fnCategorySuggestStripCats($block, $foundCategories);
+	for($i = 0; $i < count($blocks); $i++) {
+		$block = $blocks[$i];
+		switch($block){
+			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
+			case '<nowiki>':
+			case '<noinclude>':
+			case '<includeonly>' :
+			case '<onlyinclude>' :
+				$stack = substr($block,1,-1);
+				++$i;
+			case '{{' :
+				$stack = 'template';
+				$stacklist[$stack][] = true;
+				$outputText .= $block;
+				break;
+
+			// If we encounter a closing </nowiki>, </noinclude>, </includeonly> or </onlyinclude> tag, or a template closing string, remove them from our stack and continue.
+			case '</nowiki>':
+			case '</noinclude>':
+			case '</includeonly>' :
+			case '</onlyinclude>' :
+				$stack = substr($block,2,-1);
+			case '}}' :
+				$stack = 'template';
+				++$i;
+				if (!empty($stacklist[$stack])) {
+					$outputText .= $block;
+					array_pop($stacklist[$stack]);
+				}
+				break;
+
+			default :
+				$check = true;
+				foreach($stacklist as $stack){
+					if(!empty($stack)) {
+						$check = false;
+					}
+				}
+				// If we are outside protected tags, pull out categories; otherwise, just pass through any content nested inside delimiters
+				$outputText .= ($check) ? fnCategorySuggestStripCats($block) : $block;
+				break;
 		}
 	}
 
@@ -188,42 +191,31 @@ global $wgOut;
 
 }
 
-function fnCategorySuggestStripCats($texttostrip, &$catsintext){
-	global $wgContLang, $wgOut;
+function fnCategorySuggestStripCats($texttostrip){
+	global $wgContLang, $wgOut, $foundCategories;
 
 	# Get localised namespace string:
 	$m_catString = strtolower( $wgContLang->getNsText( NS_CATEGORY ) );
 	# The regular expression to find the category links:
 	$m_pattern = "\[\[({$m_catString}|category):([^\]]*)\]\]";
 	$m_replace = "$2";
-	# The container to store all found category links:
-	$m_catLinks = array ();
-	# The container to store the processed text:
-	$m_cleanText = '';
-
 
 	# Check linewise for category links:
-	foreach( explode( "\n", $texttostrip ) as $m_textLine ) {
+	$texttostrip = explode( "\n", $texttostrip );
+	foreach( $texttostrip as $index => $m_textLine ) {
 		# Filter line through pattern and store the result:
-        $m_cleanText .= rtrim( preg_replace( "/{$m_pattern}/i", "", $m_textLine ) ) . "\n";
-
-		# Check if we have found a category, else proceed with next line:
-        if( preg_match_all( "/{$m_pattern}/i", $m_textLine,$catsintext2,PREG_SET_ORDER) ){
-			 foreach( $catsintext2 as $local_cat => $m_prefix ) {
+        $texttostrip[$index] = rtrim( preg_replace_callback( 
+			"/{$m_pattern}/i",
+			function($matches){
+				global $foundCategories;
 				//Set first letter to upper case to match MediaWiki standard
-				$strFirstLetter = substr($m_prefix[2], 0,1);
-				strtoupper($strFirstLetter);
-				$newString = strtoupper($strFirstLetter) . substr($m_prefix[2], 1);
-				array_push($catsintext,$newString);
-
-	 		}
-			# Get the category link from the original text and store it in our list:
-			preg_replace( "/.*{$m_pattern}/i", $m_replace, $m_textLine,-1,$intNumber );
-		}
-
+				$foundCategories[] = ucfirst($matches[2]);
+				return "";
+			},
+			$m_textLine 
+		));
 	}
-
-	return $m_cleanText;
-
+	$texttostrip = implode("\n",$texttostrip);
+	return $texttostrip;
 }
 ?>
