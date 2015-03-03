@@ -17,11 +17,9 @@ $foundCategories = array();
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
-	global $wgContLang, $wgOut, $wgParser, $wgTitle, $wgRequest;
+	global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	global $wgTitle, $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
 
-	# Get localised namespace string:
-	$m_catString = $wgContLang->getNsText( NS_CATEGORY );
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
 	# Get the right member variables, depending on if we're on an upload form or not:
@@ -54,7 +52,7 @@ function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
 	if (!empty($catList)) {
 		$catList .= ';';		
 	}
-	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage( 'categorysuggest-select' )->text() .'"; var catString = "'. $m_catString .'"; /*]]>*/</script>' .
+	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage( 'categorysuggest-select' )->text() .'"; /*]]>*/</script>' .
 		'<script type="text/javascript" src="' . $wgCategorySuggestjs . '"></script>' .
 		'<div id="categoryselectmaster"><div><b>' .wfMsg( 'categorysuggest-title' ). '</b></div>' .
 		'<table><caption>' . wfMsg( 'categorysuggest-subtitle' ). '</caption><tbody>' .
