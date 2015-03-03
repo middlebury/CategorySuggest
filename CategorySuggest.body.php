@@ -127,18 +127,17 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 	# Get page contents:
 	$m_pageText = $m_pageObj->textbox1;
 
-	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
+	# Split the page on reserved tags so that we can avoid pulling categories out of them.
 	$reservedTags = array('nowiki','noinclude','includeonly','onlyinclude');
-	$blocks = preg_split('#(</?('. implode('|',$reservedTags) . ')>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
 	$stacklist = array();
 	foreach($reservedTags as $tag){
 		$stacklist[$tag] = array(); // Stack for reserved tags nested state.
 	}
 	$stacklist['template'] = array(); // Stack for template nested state.
+
+	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
 	$foundCategories = array();
-	$outputText = '';
-	for($i = 0; $i < count($blocks); $i++) {
-		$block = $blocks[$i];
+	foreach($m_pageText as $index => $block) {
 		$preventCheck = true;
 		switch($block){
 			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
@@ -152,7 +151,7 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 				if(empty($stacklist['nowiki'])){
 					$stacklist[$stack][] = true;
 				}
-				++$i;
+				unset($m_pageText[($index + 1)];
 				break;
 
 			// If we encounter a closing </nowiki>, </noinclude>, </includeonly> or </onlyinclude> tag, or a template closing string, remove them from our stack and continue.
@@ -166,7 +165,7 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 				if((empty($stacklist['nowiki'])) || ($stack == 'nowiki')){
 					array_pop($stacklist[$stack]);
 				}
-				++$i;
+				unset($m_pageText[($index + 1)];
 				break;
 
 			default :
@@ -179,11 +178,14 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 				// If we are outside protected tags, pull out categories; otherwise, just pass through any content nested inside delimiters
 				break;
 		}
-		$outputText .= ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
+		# if it is not a tag, or if a stack is open, there are  no categories to strip.
+		$m_pageText[$index] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
 	}
+	# text recomposition
+	$m_pageText = implode('',$m_pageText);
 
 	//Place cleaned text back into the text box:
-	$m_pageObj->textbox1 = trim( $outputText );
+	$m_pageObj->textbox1 = trim($m_pageText);
 
 	return $foundCategories;
 
