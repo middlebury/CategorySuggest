@@ -8,7 +8,7 @@
  *
 */
 
-if( !defined( 'MEDIAWIKI' ) ) {
+if(!defined('MEDIAWIKI')) {
 	die('This file is an extension to the MediaWiki software and cannot be used standalone.');
 }
 
@@ -16,21 +16,21 @@ $foundCategories = array();
 
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for editing the page:
-function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
+function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 	global $wgOut, $wgParser, $wgTitle, $wgRequest;
 	global $wgTitle, $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
 
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
 	# Get the right member variables, depending on if we're on an upload form or not:
-	if( !$m_isUpload ) {
+	if(!$m_isUpload) {
 		# Check if page is subpage once to save method calls later:
 		$m_isSubpage = $wgTitle->isSubpage();
 
 		# Check if page has been submitted already to Preview or Show Changes
 		$strCatsFromPreview = trim($wgRequest->getVal('txtSelectedCategories'), '; ');
 		# Extract all categorylinks from PAGE:
-		$catList = fnCategorySuggestGetPageCategories( $m_pageObj );
+		$catList = fnCategorySuggestGetPageCategories($m_pageObj);
 		if($strCatsFromPreview){
 		 	# Get cats from preview
 			$catList = array_merge($catList,explode(';',$strCatsFromPreview));
@@ -52,11 +52,11 @@ function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
 	if (!empty($catList)) {
 		$catList .= ';';		
 	}
-	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage( 'categorysuggest-select' )->text() .'"; /*]]>*/</script>' .
+	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage('categorysuggest-select')->text() .'"; /*]]>*/</script>' .
 		'<script type="text/javascript" src="' . $wgCategorySuggestjs . '"></script>' .
-		'<div id="categoryselectmaster"><div><b>' .wfMsg( 'categorysuggest-title' ). '</b></div>' .
-		'<table><caption>' . wfMsg( 'categorysuggest-subtitle' ). '</caption><tbody>' .
-		'<tr><th><label for="txtSelectedCategories">' .wfMsg( 'categorysuggest-boxlabel' ).':</label></th>' .
+		'<div id="categoryselectmaster"><div><b>' .wfMsg('categorysuggest-title'). '</b></div>' .
+		'<table><caption>' . wfMsg('categorysuggest-subtitle'). '</caption><tbody>' .
+		'<tr><th><label for="txtSelectedCategories">' .wfMsg('categorysuggest-boxlabel').':</label></th>' .
 		'<td><div><input onkeyup="sendRequest(this,event);" onkeydown="return checkSelect(this, event)" autocomplete="off" type="text" name="txtSelectedCategories" id="txtSelectedCategories" length="150" value="'. $catList .'" />' .
 		'<br/><div id="searchResults"></div></div></td>' .
 		'<td></td></tr></tbody></table>' .
@@ -70,12 +70,12 @@ function fnCategorySuggestShowHook( $m_isUpload = false, &$m_pageObj ) {
 
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for saving the page:
-function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
+function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
 	global $wgContLang;
 	global $wgOut;
 
 	# Get localised namespace string:
-	$m_catString = $wgContLang->getNsText( NS_CATEGORY );
+	$m_catString = $wgContLang->getNsText(NS_CATEGORY);
 	# Get some distance from the rest of the content:
 	$m_text = "\n";
 
@@ -83,14 +83,14 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	if($_POST['txtSelectedCategories']){
 		$arrSelectedCats = explode(';',$_POST['txtSelectedCategories']);
 
-	 	foreach( $arrSelectedCats as $m_cat ) {
+	 	foreach($arrSelectedCats as $m_cat) {
 	 	 	if($m_cat){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
 				$m_text .= "\n[[". $m_catString .":" . trim($m_cat) . "]]";
 			}
 		}
 		# If it is an upload we have to call a different method:
-		if ( $m_isUpload ) {
+		if ($m_isUpload) {
 			$m_pageObj->mUploadDescription .= $m_text;
 		} else{
 			$m_pageObj->textbox1 .= $m_text;
@@ -103,7 +103,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 
 /*************************************************************************************/
 ## Entry point for the CSS:
-function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
+function fnCategorySuggestOutputHook(&$m_pageObj, $m_parserOutput) {
 	global $wgScriptPath, $wgCategorySuggestcss;
 
 	# Register CSS file for input box:
@@ -121,7 +121,7 @@ function fnCategorySuggestOutputHook( &$m_pageObj, $m_parserOutput ) {
 /*************************************************************************************/
 ## Returns an array with the categories the articles is in.
 ## Also removes them from the text the user views in the editbox.
-function fnCategorySuggestGetPageCategories( $m_pageObj ) {
+function fnCategorySuggestGetPageCategories($m_pageObj) {
 	global $wgOut, $foundCategories;
 
 	# Get page contents:
@@ -135,51 +135,47 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 	}
 	$stacklist['template'] = array(); // Stack for template nested state.
 
-	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|({{|}}))#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
-	$foundCategories = array();
-	foreach($m_pageText as $index => $block) {
+	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|(\{\{|\}\}))#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	for($i = 0;$i < count($m_pageText); ++$i) {
+		$block = $m_pageText[$i];
 		$preventCheck = true;
+		$skip = 0;
 		switch($block){
 			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
 			case '{{' :
-				$stack = 'template';
+				$index = 'template';
+				unset($m_pageText[$i + 2]); // preg_split returns 3 elements for template delimiters
 			case '<nowiki>':
 			case '<noinclude>':
 			case '<includeonly>' :
 			case '<onlyinclude>' :
-				$stack = ($stack) ?: substr($block,1,-1);
-				if(empty($stacklist['nowiki'])){
-					$stacklist[$stack][] = true;
-				}
-				unset($m_pageText[($index + 1)];
+				$index = ($index) ? $index : substr($block,1,-1);
+				if(empty($stacklist['nowiki'])) $stacklist[$index][] = true;
+				unset($m_pageText[$i + 1]); // preg_split returns 2 elements for tags
 				break;
 
 			// If we encounter a closing </nowiki>, </noinclude>, </includeonly> or </onlyinclude> tag, or a template closing string, remove them from our stack and continue.
 			case '}}' :
-				$stack = 'template';
+				$index = 'template';
+				unset($m_pageText[$i + 2]);
 			case '</nowiki>':
 			case '</noinclude>':
 			case '</includeonly>' :
 			case '</onlyinclude>' :
-				$stack = ($stack) ?: substr($block,2,-1);
-				if((empty($stacklist['nowiki'])) || ($stack == 'nowiki')){
-					array_pop($stacklist[$stack]);
-				}
-				unset($m_pageText[($index + 1)];
+				$index = ($index) ? $index : substr($block,2,-1);
+				if((empty($stacklist['nowiki'])) || ($index == 'nowiki')) array_pop($stacklist[$index]);
+				unset($m_pageText[$i + 1]);
 				break;
 
 			default :
 				$preventCheck = false;
-				foreach($stacklist as $stack){
-					if(!empty($stack)){
-						$preventCheck = true;
-					}
+				foreach($stacklist as $index){
+					if(!empty($index)) $preventCheck = true;
 				}
-				// If we are outside protected tags, pull out categories; otherwise, just pass through any content nested inside delimiters
 				break;
 		}
-		# if it is not a tag, or if a stack is open, there are  no categories to strip.
-		$m_pageText[$index] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
+		# if it is a tag, or if a stack is open, there are  no categories to strip.
+		$m_pageText[$i] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
 	}
 	# text recomposition
 	$m_pageText = implode('',$m_pageText);
@@ -188,23 +184,22 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 	$m_pageObj->textbox1 = trim($m_pageText);
 
 	return $foundCategories;
-
 }
 
 function fnCategorySuggestStripCats($texttostrip){
 	global $wgContLang, $wgOut, $foundCategories;
 
 	# Get localised namespace string:
-	$m_catString = strtolower( $wgContLang->getNsText( NS_CATEGORY ) );
+	$m_catString = strtolower($wgContLang->getNsText(NS_CATEGORY));
 	# The regular expression to find the category links:
 	$m_pattern = "\[\[({$m_catString}|category):([^\]]*)\]\]";
 	$m_replace = "$2";
 
 	# Check linewise for category links:
-	$texttostrip = explode( "\n", $texttostrip );
-	foreach( $texttostrip as $index => $m_textLine ) {
+	$texttostrip = explode("\n", $texttostrip);
+	foreach($texttostrip as $index => $m_textLine) {
 		# Filter line through pattern and store the result:
-        $texttostrip[$index] = rtrim( preg_replace_callback( 
+        $texttostrip[$index] = rtrim(preg_replace_callback(
 			"/{$m_pattern}/i",
 			function($matches){
 				global $foundCategories;
