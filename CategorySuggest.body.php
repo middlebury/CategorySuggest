@@ -88,7 +88,7 @@ function fnCategorySuggestSaveHook( $m_isUpload, $m_pageObj ) {
 	 	foreach( $arrSelectedCats as $m_cat ) {
 	 	 	if($m_cat){
 				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
-				$m_text .= "\n[[". $m_catString .":" . mysql_escape_string(trim($m_cat)) . "]]";
+				$m_text .= "\n[[". $m_catString .":" . trim($m_cat) . "]]";
 			}
 		}
 		# If it is an upload we have to call a different method:
