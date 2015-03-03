@@ -135,7 +135,7 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 	}
 	$stacklist['template'] = array(); // Stack for template nested state.
 
-	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|({{|}}))#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
 	$foundCategories = array();
 	foreach($m_pageText as $index => $block) {
 		$preventCheck = true;
