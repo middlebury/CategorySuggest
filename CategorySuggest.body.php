@@ -130,58 +130,58 @@ function fnCategorySuggestGetPageCategories( $m_pageObj ) {
 	$m_pageText = $m_pageObj->textbox1;
 
 	# Split the page on <nowiki> and <noinclude> tags so that we can avoid pulling categories out of them.
-	$blocks = preg_split('#(</?(nowiki|noinclude|includeonly|onlyinclude)>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
-	$stacklist = array(
-		'nowiki' => array(), // Stack for nowiki nested state.
-		'noinclude' => array(), // Stack for noinclude nested state.
-		'includeonly' => array(), // Stack for includeonly nested state.
-		'onlyinclude' => array(), // Stack for onlyinclude nested state.
-		'template' => array() // Stack for template nested state.
-	);
+	$reservedTags = array('nowiki','noinclude','includeonly','onlyinclude');
+	$blocks = preg_split('#(</?('. implode('|',$reservedTags) . ')>|{{|}})#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	$stacklist = array();
+	foreach($reservedTags as $tag){
+		$stacklist[$tag] = array(); // Stack for reserved tags nested state.
+	}
+	$stacklist['template'] = array(); // Stack for template nested state.
 	$foundCategories = array();
 	$outputText = '';
 	for($i = 0; $i < count($blocks); $i++) {
 		$block = $blocks[$i];
+		$preventCheck = true;
 		switch($block){
 			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
+			case '{{' :
+				$stack = 'template';
 			case '<nowiki>':
 			case '<noinclude>':
 			case '<includeonly>' :
 			case '<onlyinclude>' :
-				$stack = substr($block,1,-1);
+				$stack = ($stack) ?: substr($block,1,-1);
+				if(empty($stacklist['nowiki'])){
+					$stacklist[$stack][] = true;
+				}
 				++$i;
-			case '{{' :
-				$stack = 'template';
-				$stacklist[$stack][] = true;
-				$outputText .= $block;
 				break;
 
 			// If we encounter a closing </nowiki>, </noinclude>, </includeonly> or </onlyinclude> tag, or a template closing string, remove them from our stack and continue.
+			case '}}' :
+				$stack = 'template';
 			case '</nowiki>':
 			case '</noinclude>':
 			case '</includeonly>' :
 			case '</onlyinclude>' :
-				$stack = substr($block,2,-1);
-			case '}}' :
-				$stack = 'template';
-				++$i;
-				if (!empty($stacklist[$stack])) {
-					$outputText .= $block;
+				$stack = ($stack) ?: substr($block,2,-1);
+				if((empty($stacklist['nowiki'])) || ($stack == 'nowiki')){
 					array_pop($stacklist[$stack]);
 				}
+				++$i;
 				break;
 
 			default :
-				$check = true;
+				$preventCheck = false;
 				foreach($stacklist as $stack){
-					if(!empty($stack)) {
-						$check = false;
+					if(!empty($stack)){
+						$preventCheck = true;
 					}
 				}
 				// If we are outside protected tags, pull out categories; otherwise, just pass through any content nested inside delimiters
-				$outputText .= ($check) ? fnCategorySuggestStripCats($block) : $block;
 				break;
 		}
+		$outputText .= ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
 	}
 
 	//Place cleaned text back into the text box:
