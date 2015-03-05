@@ -171,7 +171,7 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 				break;
 		}
 		# if it is a tag, or if a stack is open, there are  no categories to strip.
-		$m_pageText[$i] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block,&$foundCategories);
+		$m_pageText[$i] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block,$foundCategories);
 	}
 	# text recomposition
 	$m_pageText = implode('',$m_pageText);
@@ -182,7 +182,7 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 	return $foundCategories;
 }
 
-function fnCategorySuggestStripCats($texttostrip,$foundCategories){
+function fnCategorySuggestStripCats($texttostrip,&$foundCategories){
 	global $wgContLang;
 
 	# Get localised namespace string:
