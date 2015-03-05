@@ -131,36 +131,31 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 	}
 	$stacklist['template'] = array(); // Stack for template nested state.
 
-	$m_pageText = preg_split('#(</?('. implode('|',$reservedTags) . ')>|(\{\{|\}\}))#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
-	for($i = 0;$i < count($m_pageText); ++$i) {
-		$block = $m_pageText[$i];
+	$m_pageText = preg_split('#(</?(?:'. implode('|',$reservedTags) . ')>|(?:\{\{|\}\}))#u', $m_pageText , null, PREG_SPLIT_DELIM_CAPTURE);
+	foreach($m_pageText as $i => $block) {
 		$preventCheck = true;
 		$skip = 0;
 		switch($block){
 			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
 			case '{{' :
 				$index = 'template';
-				unset($m_pageText[$i + 2]); // preg_split returns 3 elements for template delimiters
 			case '<nowiki>':
 			case '<noinclude>':
 			case '<includeonly>' :
 			case '<onlyinclude>' :
 				$index = ($index) ? $index : substr($block,1,-1);
 				if(empty($stacklist['nowiki'])) $stacklist[$index][] = true;
-				unset($m_pageText[$i + 1]); // preg_split returns 2 elements for tags
 				break;
 
 			// If we encounter a closing </nowiki>, </noinclude>, </includeonly> or </onlyinclude> tag, or a template closing string, remove them from our stack and continue.
 			case '}}' :
 				$index = 'template';
-				unset($m_pageText[$i + 2]);
 			case '</nowiki>':
 			case '</noinclude>':
 			case '</includeonly>' :
 			case '</onlyinclude>' :
 				$index = ($index) ? $index : substr($block,2,-1);
 				if((empty($stacklist['nowiki'])) || ($index == 'nowiki')) array_pop($stacklist[$index]);
-				unset($m_pageText[$i + 1]);
 				break;
 
 			default :
