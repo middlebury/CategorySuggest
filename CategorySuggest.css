@@ -12,7 +12,6 @@
 	line-height:1.6;
 	overflow:auto;
 	max-height:170px;
-	min-height:170px;
 	height:auto;
 	width:95%;
 	margin-top :-1px;
@@ -71,7 +70,7 @@ span.highlight {
 	background-color:rgb(231,71,71);
 	color:white;
 	cursor:pointer;
-	line-Height:1.6;
+	line-height:1.6;
 	padding:3px 4px;
 /*	width:278px; */
 	margin:0px;
@@ -99,7 +98,7 @@ p.highlight {
 	background-color:rgb(231,71,71);
 	color:white;
 	cursor:pointer;
-	line-Height:1;
+	line-height:1;
 	padding:0.1em 2px;
 /*	width:278px; */
 	margin:0px;
@@ -110,7 +109,7 @@ p.cs {
 	color:rgb(231,71,71);
 	background-color:white;
 	cursor:pointer;
-	line-Height:1;
+	line-height:1;
 	padding:0.1em 2px;
 /*	width:278px;*/
 	margin:0px;
