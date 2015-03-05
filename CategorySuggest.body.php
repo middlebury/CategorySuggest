@@ -12,13 +12,11 @@ if(!defined('MEDIAWIKI')) {
 	die('This file is an extension to the MediaWiki software and cannot be used standalone.');
 }
 
-$foundCategories = array();
-
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
-	global $wgOut, $wgParser, $wgTitle, $wgRequest;
-	global $wgTitle, $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
+	global $wgTitle, $wgRequest;
+	global $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
 
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
@@ -61,7 +59,6 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 		'<br/><div id="searchResults"></div></div></td>' .
 		'<td></td></tr></tbody></table>' .
 		'<input type="hidden" value="' . $wgCategorySuggestCloud . '" id="txtCSDisplayType" />' .
-//		'<input type="hidden" id="txtCSCats" name="txtCSCats" value="'. catList .'" />' .
 		'</div>';
 	$m_pageObj->$m_place .= $extCategoryField;
 
@@ -72,7 +69,6 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 ## Entry point for the hook and main worker function for saving the page:
 function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
 	global $wgContLang;
-	global $wgOut;
 
 	# Get localised namespace string:
 	$m_catString = $wgContLang->getNsText(NS_CATEGORY);
@@ -122,8 +118,8 @@ function fnCategorySuggestOutputHook(&$m_pageObj, $m_parserOutput) {
 ## Returns an array with the categories the articles is in.
 ## Also removes them from the text the user views in the editbox.
 function fnCategorySuggestGetPageCategories($m_pageObj) {
-	global $wgOut, $foundCategories;
 
+	$foundCategories = array();
 	# Get page contents:
 	$m_pageText = $m_pageObj->textbox1;
 
@@ -175,7 +171,7 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 				break;
 		}
 		# if it is a tag, or if a stack is open, there are  no categories to strip.
-		$m_pageText[$i] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block);
+		$m_pageText[$i] = ($preventCheck) ? $block : fnCategorySuggestStripCats($block,&$foundCategories);
 	}
 	# text recomposition
 	$m_pageText = implode('',$m_pageText);
@@ -186,8 +182,8 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 	return $foundCategories;
 }
 
-function fnCategorySuggestStripCats($texttostrip){
-	global $wgContLang, $wgOut, $foundCategories;
+function fnCategorySuggestStripCats($texttostrip,$foundCategories){
+	global $wgContLang;
 
 	# Get localised namespace string:
 	$m_catString = strtolower($wgContLang->getNsText(NS_CATEGORY));
@@ -201,8 +197,7 @@ function fnCategorySuggestStripCats($texttostrip){
 		# Filter line through pattern and store the result:
         $texttostrip[$index] = rtrim(preg_replace_callback(
 			"/{$m_pattern}/i",
-			function($matches){
-				global $foundCategories;
+			function($matches) use (&$foundCategories){
 				//Set first letter to upper case to match MediaWiki standard
 				$foundCategories[] = ucfirst($matches[2]);
 				return "";
