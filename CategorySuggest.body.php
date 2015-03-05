@@ -44,7 +44,7 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 		$catList = array();
 
 		# Insert local CSS:
-	$localcss = '<style type="text/css" scoped="scoped">/*<![CDATA[*/ @import url("'. $wgCategorySuggestcss .'"); #wpDestFile-warning{padding:0!important}/*]]>*/</style>';
+		$localcss = '<style type="text/css" scoped="scoped">/*<![CDATA[*/ @import url("'. $wgCategorySuggestcss .'"); #wpDestFile-warning{padding:0!important}/*]]>*/</style>';
 
 		# Place output at the right place:
 		$m_place = 'uploadFormTextAfterSummary';
