@@ -8,7 +8,7 @@
 */
 
 /*Suggest search results DIV*/
-#searchResults {
+#categoryselectmaster div#searchResults {
 	line-height:1.6;
 	overflow:auto;
 	max-height:170px;
@@ -30,27 +30,21 @@
 #categoryselectmaster {
 	border:1px solid #c21731;
 	background-color:#e9e9e9;
-	max-height:550px;
 	padding:5px;
 	margin:0px 0px 15px 0px;
 }
 
 #categoryselectmaster table {
 	background-color:#e9e9e9;
+}
+
+#categoryselectmaster table, #categoryselectmaster td, #categoryselectmaster div {
 	width:100%;
 	position:relative;
 }
 
 #categoryselectmaster caption {
 	text-align:left;
-}
-
-#categoryselectmaster td,#categoryselectmaster td div {
-	width:100%;
-}
-
-#categoryselectmaster td div {
-	position:relative;
 }
 
 input#txtSelectedCategories {
@@ -70,7 +64,7 @@ span.highlight {
 	background-color:rgb(231,71,71);
 	color:white;
 	cursor:pointer;
-	line-height:1.6;
+	line-Height:1.6;
 	padding:3px 4px;
 /*	width:278px; */
 	margin:0px;
@@ -98,7 +92,7 @@ p.highlight {
 	background-color:rgb(231,71,71);
 	color:white;
 	cursor:pointer;
-	line-height:1;
+	line-Height:1;
 	padding:0.1em 2px;
 /*	width:278px; */
 	margin:0px;
@@ -109,7 +103,7 @@ p.cs {
 	color:rgb(231,71,71);
 	background-color:white;
 	cursor:pointer;
-	line-height:1;
+	line-Height:1;
 	padding:0.1em 2px;
 /*	width:278px;*/
 	margin:0px;
