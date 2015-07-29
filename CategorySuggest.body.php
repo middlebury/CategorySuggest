@@ -16,7 +16,7 @@ if(!defined('MEDIAWIKI')) {
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 	global $wgTitle, $wgRequest;
-	global $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
+	global $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs, $wgCategorySuggestcss;
 
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
@@ -35,12 +35,16 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 		}
 		# Check for duplicate
 		$catList = array_unique($catList);
+		# No need to load local CSS
+		$localcss = '';
 		# Never ever use editFormTextTop here as it resides outside the <form> so we will never get contents
 		$m_place = 'editFormTextAfterWarn';
-		# Print the localised title for the select box:
 	} else	{
 		# No need to get categories:
 		$catList = array();
+
+		# Insert local CSS:
+		$localcss = '<style type="text/css" scoped="scoped">/*<![CDATA[*/ @import url("'. $wgCategorySuggestcss .'"); #wpDestFile-warning{padding:0!important}/*]]>*/</style>';
 
 		# Place output at the right place:
 		$m_place = 'uploadFormTextAfterSummary';
@@ -50,14 +54,16 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 	if (!empty($catList)) {
 		$catList .= ';';		
 	}
+
+	# Print the localised title for the select box:
 	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage('categorysuggest-select')->text() .'"; /*]]>*/</script>' .
 		'<script type="text/javascript" src="' . $wgCategorySuggestjs . '"></script>' .
-		'<div id="categoryselectmaster"><div><b>' .wfMsg('categorysuggest-title'). '</b></div>' .
+		'<div id="categoryselectmaster">'. $localcss .'<p><b>' .wfMsg('categorysuggest-title'). '</b></p>' .
 		'<table><caption>' . wfMsg('categorysuggest-subtitle'). '</caption><tbody>' .
 		'<tr><th><label for="txtSelectedCategories">' .wfMsg('categorysuggest-boxlabel').':</label></th>' .
 		'<td><div><input onkeyup="sendRequest(this,event);" onkeydown="return checkSelect(this, event)" autocomplete="off" type="text" name="txtSelectedCategories" id="txtSelectedCategories" length="150" value="'. $catList .'" />' .
 		'<br/><div id="searchResults"></div></div></td>' .
-		'<td></td></tr></tbody></table>' .
+		'</tr></tbody></table>' .
 		'<input type="hidden" value="' . $wgCategorySuggestCloud . '" id="txtCSDisplayType" />' .
 		'</div>';
 	$m_pageObj->$m_place .= $extCategoryField;
