@@ -190,15 +190,18 @@ function fnCategorySuggestStripCats($texttostrip,&$foundCategories){
 	$texttostrip = explode("\n", $texttostrip);
 	foreach($texttostrip as $index => $m_textLine) {
 		# Filter line through pattern and store the result:
-        $texttostrip[$index] = rtrim(preg_replace_callback(
+		$texttostrip[$index] = preg_replace_callback(
 			"/{$m_pattern}/i",
 			function($matches) use (&$foundCategories){
 				//Set first letter to upper case to match MediaWiki standard
 				$foundCategories[] = ucfirst($matches[2]);
 				return "";
 			},
-			$m_textLine 
-		));
+			$m_textLine,
+			-1,
+			$count
+		);
+		if($count) $texttostrip[$index] = rtrim($texttostrip[$index]);
 	}
 	$texttostrip = implode("\n",$texttostrip);
 	return $texttostrip;
