@@ -45,6 +45,21 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 $wgExtensionMessagesFiles['CategorySuggest'] = dirname(__FILE__) . '/CategorySuggest.i18n.php';
 
+$wgResourceModules['ext.CategorySuggest'] = array(
+	'scripts' => 'CategorySuggest.js',
+	'styles' => 'CategorySuggest.css',
+	'position' => 'bottom',
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'CategorySuggest'
+);
+
+$wgHooks['BeforePageDisplay'][] = 'fnCategorySuggestAddModules';
+
+function fnCategorySuggestAddModules( &$out, $skin = false ) {
+	$out->addModules( 'ext.CategorySuggest' );
+	return true;
+}
+
 
 ## register Ajax function to be called from Javascript file
 $wgAjaxExportList[] = 'fnCategorySuggestAjax';
@@ -101,12 +116,9 @@ function fnCategorySuggest() {
 	$wgHooks['UploadForm:BeforeProcessing'][] = array( 'fnCategorySuggestSaveHook', true );
 
 	## Infrastructure
-	# Hook our own CSS:
-	$wgHooks['OutputPageParserOutput'][] = 'fnCategorySuggestOutputHook';
 	# Hook up local messages:
 	$wgHooks['LoadAllMessages'][] = 'fnCategorySuggestMessageHook';
 }
 
 ## Load the file containing the hook functions:
 require_once( 'CategorySuggest.body.php' );
-?>
