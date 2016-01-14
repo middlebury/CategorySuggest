@@ -12,7 +12,7 @@
 var csQuery = '';
 addEvent(document, "mouseup",keyPressHandler);
 
-function sendRequest(q,e) {
+window.sendRequest = function(q,e) {
 	if ([e.keyCode||e.which] == 27 ) {
 		var resultDiv = document.getElementById('searchResults');
 		resultDiv.style.visibility = 'hidden';
@@ -86,7 +86,6 @@ function sendRequest(q,e) {
 	}
 }
 
-
 // SELECT CATEGORY FROM SUGGEST DIV AND ADD IT TO THE INPUT BOX
 function selectEntry () {
 	  	var strExistingValues = document.getElementById('txtSelectedCategories').value;
@@ -149,7 +148,7 @@ function addEvent(el, sEvt, PFnc)
       //}
    }
 
-function checkSelect(input, event) {
+window.checkSelect = function(input, event) {
 	switch (event.keyCode) {
 		case 40: // Down Arrow
 		case 38: // Up Arrow

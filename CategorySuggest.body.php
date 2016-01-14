@@ -16,7 +16,7 @@ if(!defined('MEDIAWIKI')) {
 ## Entry point for the hook and main worker function for editing the page:
 function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 	global $wgTitle, $wgRequest;
-	global $wgScriptPath, $wgCategorySuggestCloud, $wgCategorySuggestjs;
+	global $wgScriptPath, $wgCategorySuggestCloud;
 
 	# Get ALL categories from wiki:
 //		$m_allCats = fnAjaxSuggestGetAllCategories();
@@ -48,10 +48,9 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 
 	$catList = htmlspecialchars(str_replace('_',' ',implode(';', $catList)));
 	if (!empty($catList)) {
-		$catList .= ';';		
+		$catList .= ';';
 	}
 	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage('categorysuggest-select')->text() .'"; /*]]>*/</script>' .
-		'<script type="text/javascript" src="' . $wgCategorySuggestjs . '"></script>' .
 		'<div id="categoryselectmaster"><div><b>' .wfMsg('categorysuggest-title'). '</b></div>' .
 		'<table><caption>' . wfMsg('categorysuggest-subtitle'). '</caption><tbody>' .
 		'<tr><th><label for="txtSelectedCategories">' .wfMsg('categorysuggest-boxlabel').':</label></th>' .
@@ -94,23 +93,6 @@ function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
 	}
 
 	# Return to the let MediaWiki do the rest of the work:
-	return true;
-}
-
-/*************************************************************************************/
-## Entry point for the CSS:
-function fnCategorySuggestOutputHook(&$m_pageObj, $m_parserOutput) {
-	global $wgScriptPath, $wgCategorySuggestcss;
-
-	# Register CSS file for input box:
-	$m_pageObj->addLink(
-		array(
-			'rel'	=> 'stylesheet',
-			'type'	=> 'text/css',
-			'href'	=> $wgCategorySuggestcss
-		)
-	);
-
 	return true;
 }
 
