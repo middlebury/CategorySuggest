@@ -122,4 +122,3 @@ function fnCategorySuggest() {
 
 ## Load the file containing the hook functions:
 require_once( 'CategorySuggest.body.php' );
-?>

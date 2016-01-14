@@ -188,4 +188,3 @@ function fnCategorySuggestStripCats($texttostrip,&$foundCategories){
 	$texttostrip = implode("\n",$texttostrip);
 	return $texttostrip;
 }
-?>
