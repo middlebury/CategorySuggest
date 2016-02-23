@@ -67,7 +67,7 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 /*************************************************************************************/
 ## Entry point for the hook and main worker function for saving the page:
 function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
-	global $wgContLang;
+	global $wgContLang, $wgCapitalLinks;
 
 	# Get localised namespace string:
 	$m_catString = $wgContLang->getNsText(NS_CATEGORY);
@@ -77,10 +77,11 @@ function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
 	#CHECK IF USER HAS SELECTED ANY CATEGORIES
 	if($_POST['txtSelectedCategories']){
 		$arrSelectedCats = explode(';',$_POST['txtSelectedCategories']);
-
 	 	foreach($arrSelectedCats as $m_cat) {
 	 	 	if($m_cat){
-				$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
+				if(isset($wgCapitalLinks) && $wgCapitalLinks) {
+					$m_cat = Title::capitalize($m_cat, NS_CATEGORY);
+				}
 				$m_text .= "\n[[". $m_catString .":" . trim($m_cat) . "]]";
 			}
 		}
@@ -160,7 +161,7 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 }
 
 function fnCategorySuggestStripCats($texttostrip,&$foundCategories){
-	global $wgContLang;
+	global $wgContLang, $wgCapitalLinks;
 
 	# Get localised namespace string:
 	$m_catString = strtolower($wgContLang->getNsText(NS_CATEGORY));
@@ -175,8 +176,13 @@ function fnCategorySuggestStripCats($texttostrip,&$foundCategories){
 		$texttostrip[$index] = preg_replace_callback(
 			"/{$m_pattern}/i",
 			function($matches) use (&$foundCategories){
-				//Set first letter to upper case to match MediaWiki standard
-				$foundCategories[] = ucfirst($matches[2]);
+				//Set first letter to upper case to match MediaWiki standard, if $wgCapitalLinks is true
+				if(isset($wgCapitalLinks) && $wgCapitalLinks) {
+					$foundCategories[] = ucfirst($matches[2]);
+				}
+				else {
+					$foundCategories[] = $matches[2];
+				}
 				return "";
 			},
 			$m_textLine,
