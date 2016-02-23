@@ -41,5 +41,13 @@ $messages = array(
 		'categorysuggest-boxlabel' => 'Categorie',
 		'categorysuggest-taglabel' => 'Categorie più utilizzate',
 		'categorysuggest-select' => 'Clicca per aggiungere la categoria all\'elenco per questa pagina!'
+	),
+
+    'es' => array(
+		'categorysuggest-title' => 'ASIGNACIÓN DE CATEGORIA',
+		'categorysuggest-subtitle' => 'Introduzca el nombre de una categoría para este artículo por favor.',
+		'categorysuggest-boxlabel' => 'Categoría',
+		'categorysuggest-taglabel' => 'Categorías populares',
+		'categorysuggest-select' => 'Pinche aquí para añadir una categoría de la lista a la pagina!'
 	)
 );
