@@ -70,8 +70,8 @@ window.sendRequest = function(q,e) {
 					}
 					result.name = data[f].replace(/_/g," ");
 					csWord = result.name;
-
-					csHTML = '<span class="csSelect">' + csWord.substr(0, csQuery.length) + '</span>' + csWord.substr(csQuery.length) + " ";
+					csQueryRegEx = new RegExp("(" + csQuery + ")", "gi");
+					csHTML = csWord.replace(csQueryRegEx, '<span class="csSelect">$1</span>')
 					result.innerHTML = csHTML;
 					result.onmouseover = highlight;
 					result.onmouseout = unHighlight;

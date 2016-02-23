@@ -71,7 +71,7 @@ function fnCategorySuggestAjax( $query ) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$searchString = $dbr->buildLike($query, $dbr->anyString());
 		// Strip off the 'LIKE' clause so we can replace it with a case-changing command.
-		$searchString = preg_replace('/^\s*LIKE\s*/', '', $searchString);
+		$searchString = preg_replace('/^\sLIKE\s\'/', '\'%', $searchString);
 		$res = $dbr->select(
 			$dbr->tableName('categorylinks'),
 			array('cl_to'),
