@@ -143,7 +143,9 @@ function addEvent(el, sEvt, PFnc)
 
    function keyPressHandler(e) {
 		var resultDiv = document.getElementById('searchResults');
-		resultDiv.style.visibility = 'hidden';
+		if (typeof resultDiv !== 'undefined' && resultDiv !== null ) {
+			resultDiv.style.visibility = 'hidden';
+		}
 	    e.preventDefault? e.preventDefault() : e.returnValue = false;
       //}
    }
