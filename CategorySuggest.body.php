@@ -50,10 +50,12 @@ function fnCategorySuggestShowHook($m_isUpload = false, &$m_pageObj) {
 	if (!empty($catList)) {
 		$catList .= ';';
 	}
+
+	# Print the localised title for the select box:
 	$extCategoryField = '<script type="text/javascript">/*<![CDATA[*/ var categorysuggestSelect = "'. wfMessage('categorysuggest-select')->text() .'"; /*]]>*/</script>' .
-		'<div id="categoryselectmaster"><div><b>' .wfMsg('categorysuggest-title'). '</b></div>' .
-		'<table><caption>' . wfMsg('categorysuggest-subtitle'). '</caption><tbody>' .
-		'<tr><th><label for="txtSelectedCategories">' .wfMsg('categorysuggest-boxlabel').':</label></th>' .
+		'<div id="categoryselectmaster"><div><b>' . wfMessage('categorysuggest-title')->text() . '</b></div>' .
+		'<table><caption>' . wfMessage('categorysuggest-subtitle')->text() . '</caption><tbody>' .
+		'<tr><th><label for="txtSelectedCategories">' .wfMessage('categorysuggest-boxlabel')->text() .':</label></th>' .
 		'<td><div><input onkeyup="sendRequest(this,event);" onkeydown="return checkSelect(this, event)" autocomplete="off" type="text" name="txtSelectedCategories" id="txtSelectedCategories" length="150" value="'. $catList .'" />' .
 		'<br/><div id="searchResults"></div></div></td>' .
 		'<td></td></tr></tbody></table>' .
