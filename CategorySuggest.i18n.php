@@ -43,11 +43,19 @@ $messages = array(
 		'categorysuggest-select' => 'Clicca per aggiungere la categoria all\'elenco per questa pagina!'
 	),
 
-    'es' => array(
+	'es' => array(
 		'categorysuggest-title' => 'ASIGNACIÓN DE CATEGORIA',
 		'categorysuggest-subtitle' => 'Introduzca el nombre de una categoría para este artículo por favor.',
 		'categorysuggest-boxlabel' => 'Categoría',
 		'categorysuggest-taglabel' => 'Categorías populares',
 		'categorysuggest-select' => 'Pinche aquí para añadir una categoría de la lista a la pagina!'
+	),
+	
+	'fa' => array(
+		'categorysuggest-title' => 'انتخاب رده',
+		'categorysuggest-subtitle' => 'لطفا اسم رده مورد نظر را وارد نمایید.',
+		'categorysuggest-boxlabel' => 'رده',
+		'categorysuggest-taglabel' =>'رده های محبوب',
+		'categorysuggest-select' => 'اینجا کلیک کنید تا رده مورد نظر به صفحه اضافه شود!'
 	)
 );
