@@ -67,15 +67,20 @@ $wgAjaxExportList[] = 'fnCategorySuggestAjax';
 ## Entry point for Ajax, registered in $wgAjaxExportList; returns all cats starting with $query
 function fnCategorySuggestAjax( $query ) {
 	global $wgCategorySuggestNumToSend;
-	if(isset($query) && $query != NULL) {
+	if (isset($query) && $query != NULL) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$searchString = $dbr->buildLike($query, $dbr->anyString());
-		// Strip off the 'LIKE' clause so we can replace it with a case-changing command.
-		$searchString = preg_replace('/^\sLIKE\s\'/', '\'%', $searchString);
+		// Extract LIKE and ESCAPE for building search string.
+		$escapeSuffix = "";
+		if (preg_match("/^\s*LIKE\s+'([^']+)'(\s+ESCAPE\s+'.')?/", $searchString, $matches)) {
+			$searchString = "%" . $matches[1];
+			if (!empty($matches[2]))
+				$escapeSuffix = $matches[2];
+		}
 		$res = $dbr->select(
 			$dbr->tableName('categorylinks'),
 			array('cl_to'),
-			"UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE(".$searchString.")",
+			"UCASE(CONVERT(cl_to USING utf8)) LIKE UCASE('".$searchString."')".$escapeSuffix,
 			__METHOD__,
 			array('DISTINCT', 'LIMIT' => $wgCategorySuggestNumToSend)
 		);
