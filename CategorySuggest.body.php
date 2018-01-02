@@ -77,7 +77,7 @@ function fnCategorySuggestSaveHook($m_isUpload, $m_pageObj) {
 	$m_text = "\n";
 
 	#CHECK IF USER HAS SELECTED ANY CATEGORIES
-	if($_POST['txtSelectedCategories']){
+	if(isset($_POST['txtSelectedCategories']) && $_POST['txtSelectedCategories']){
 		$arrSelectedCats = explode(';',$_POST['txtSelectedCategories']);
 	 	foreach($arrSelectedCats as $m_cat) {
 	 	 	if($m_cat){
