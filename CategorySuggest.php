@@ -68,7 +68,7 @@ $wgAjaxExportList[] = 'fnCategorySuggestAjax';
 function fnCategorySuggestAjax( $query ) {
 	global $wgCategorySuggestNumToSend;
 	if (isset($query) && $query != NULL) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$searchString = $dbr->buildLike($query, $dbr->anyString());
 		// Extract LIKE and ESCAPE for building search string.
 		$escapeSuffix = "";
