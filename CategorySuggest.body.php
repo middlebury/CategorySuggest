@@ -120,6 +120,7 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 	foreach($m_pageText as $i => $block) {
 		$preventCheck = true;
 		$skip = 0;
+		$index = '';
 		switch($block){
 			// If we encounter a <nowiki>, <noinclude>, <includeonly> or <onlyinclude> tag, or a template opening string, add it to our stacks.
 			case '{{' :
@@ -145,8 +146,8 @@ function fnCategorySuggestGetPageCategories($m_pageObj) {
 
 			default :
 				$preventCheck = false;
-				foreach($stacklist as $index){
-					if(!empty($index)) $preventCheck = true;
+				foreach($stacklist as $stack){
+					if(!empty($stack)) $preventCheck = true;
 				}
 				break;
 		}
